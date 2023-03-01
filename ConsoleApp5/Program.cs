@@ -1,7 +1,6 @@
-﻿using ConsoleApp5;
-using System.Diagnostics;
+﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using BenchmarkDotNet.Attributes;
+using ConsoleApp5;
 
 namespace ExpressionEvaluator
 {
