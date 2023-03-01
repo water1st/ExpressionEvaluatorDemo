@@ -12,18 +12,20 @@ namespace ConsoleApp5
         {
             {"(", 0},
             {")", 0},
-            {"==", 1},
-            {"!=", 1},
-            {"##", 1},
-            {"!#", 1},
-            {">", 2},
-            {">=", 2},
-            {"<", 2},
-            {"<=", 2},
-            {"+", 3},
-            {"-", 3},
-            {"*", 4},
-            {"/", 4}
+            {"&&", 1},
+            {"||", 1},
+            {"==", 2},
+            {"!=", 2},
+            {"##", 2},
+            {"!#", 2},
+            {">", 3},
+            {">=", 3},
+            {"<", 3},
+            {"<=", 3},
+            {"+", 4},
+            {"-", 4},
+            {"*", 5},
+            {"/", 5}
         });
 
         /// <summary>
@@ -275,6 +277,28 @@ namespace ConsoleApp5
                         {
                             result.Value = true.ToString();
                         }
+                        result.Type = ExpressionNodeType.Boolean;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                    }
+                    break;
+                case "&&":
+                    if (left.Type == ExpressionNodeType.Boolean && right.Type == ExpressionNodeType.Boolean)
+                    {
+                        result.Value = (bool.Parse(left.Value) && bool.Parse(right.Value)).ToString();
+                        result.Type = ExpressionNodeType.Boolean;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                    }
+                    break;
+                case "||":
+                    if (left.Type == ExpressionNodeType.Boolean && right.Type == ExpressionNodeType.Boolean)
+                    {
+                        result.Value = (bool.Parse(left.Value) || bool.Parse(right.Value)).ToString();
                         result.Type = ExpressionNodeType.Boolean;
                     }
                     else
