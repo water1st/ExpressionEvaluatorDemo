@@ -363,7 +363,7 @@ namespace ConsoleApp5
         private IEnumerable<ExpressionNode> Tokenize(string expression)
         {
             var regex = new Regex("[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]");
-            var x = regex.Matches(expression).Select(x => x.Value).ToArray();
+
             foreach (Match match in regex.Matches(expression))
             {
                 yield return match.Value;
