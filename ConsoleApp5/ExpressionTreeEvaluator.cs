@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace ConsoleApp5
 {
@@ -296,6 +291,9 @@ namespace ConsoleApp5
             return result;
         }
 
+        /// <summary>
+        /// 构建表达式树
+        /// </summary>
         private ExpressionNode BuildTree(IEnumerable<ExpressionNode> nodes)
         {
             //结果栈
@@ -375,6 +373,9 @@ namespace ConsoleApp5
             }
         }
 
+        /// <summary>
+        /// 节点
+        /// </summary>
         private class ExpressionNode
         {
             public ExpressionNode(string value)
