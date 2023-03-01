@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 
 namespace ConsoleApp5
 {
@@ -11,7 +12,7 @@ namespace ConsoleApp5
         /// <summary>
         /// 操作符和优先级
         /// </summary>
-        private readonly IDictionary<string, int> precedence = new Dictionary<string, int>()
+        protected static readonly IReadOnlyDictionary<string, int> precedence = new ReadOnlyDictionary<string, int>(new Dictionary<string, int>
         {
             {"(", 0},
             {")", 0},
@@ -27,7 +28,7 @@ namespace ConsoleApp5
             {"-", 3},
             {"*", 4},
             {"/", 4}
-        };
+        });
 
         /// <summary>
         /// 运算表达式
@@ -350,87 +351,24 @@ namespace ConsoleApp5
             foreach (Match match in regex.Matches(expression))
             {
                 Word world = match.Value;
-                if (IsOperator(world))
-                {
-                    world.Type = WordType.Operator;
-                }
-                else if (IsDatetime(world))
-                {
-                    world.Value = world.Value.Trim('\"');
-                    world.Type = WordType.Datetime;
-                }
-                else if (IsString(world))
-                {
-                    world.Value = world.Value.Trim('\"');
-                    world.Type = WordType.String;
-                }
-                else if (IsBoolean(world))
-                {
-                    world.Type = WordType.Boolean;
-                }
-                else if (IsNumber(world))
-                {
-                    world.Type = WordType.Number;
-                }
-                else if (IsStringArray(world))
-                {
-                    world.Type = WordType.StringArray;
-                }
-
                 yield return world;
             }
         }
 
-        //是否操作符
-        private bool IsOperator(string value)
-        {
-            return precedence.ContainsKey(value);
-        }
-
-        //是否是数字（包括负数）
-        private bool IsNumber(string value)
-        {
-            return Regex.IsMatch(value, @"^-?\d+(\.\d+)?$");
-        }
-
-        /// <summary>
-        /// 是否日期类型
-        /// </summary>
-        //判断一个字符串是否是日期类型（包括四种格式）
-        private bool IsDatetime(string value)
-        {
-            return Regex.IsMatch(value, @"^""\d{4}(-|/)\d{2}(-|/)\d{2}( \d{2}:\d{2}:\d{2})?""$");
-        }
-
-        /// <summary>
-        /// 是否字符串
-        /// </summary>
-        private bool IsString(string value)
-        {
-            return (!IsDatetime(value)) && value.StartsWith("\"") && value.EndsWith("\"");
-        }
-
-        /// <summary>
-        /// 是否布尔值
-        /// </summary>
-        private bool IsBoolean(string value)
-        {
-            return value == "True" || value == "False" || value == "true" || value == "false";
-        }
-
-        /// <summary>
-        /// 是否JSON字符串数组
-        /// </summary>
-        private bool IsStringArray(string value)
-        {
-            return Regex.IsMatch(value, @"^\[\s*""([^""\\]*(\\.[^""\\]*)*)""(\s*,\s*""([^""\\]*(\\.[^""\\]*)*)"")*\s*\]$");
-        }
 
         /// <summary>
         /// 单词
         /// </summary>
         private class Word
         {
+            public Word(string value)
+            {
+                Value = value;
+                SetType();
+            }
+
+            public Word() { }
+
             public string Value { get; set; }
             public WordType Type { get; set; }
 
@@ -441,12 +379,98 @@ namespace ConsoleApp5
 
             public static implicit operator Word(string word)
             {
-                return new Word { Value = word, Type = WordType.Unknown };
+                return new Word(word);
             }
 
             public override string ToString()
             {
                 return Value;
+            }
+
+            private void SetType()
+            {
+                if (string.IsNullOrWhiteSpace(Value) || Value == string.Empty)
+                {
+                    Type = WordType.Unknown;
+                }
+                else if (IsOperator())
+                {
+                    Type = WordType.Operator;
+                }
+                else if (IsDatetime())
+                {
+                    Value = Value.Trim('\"');
+                    Type = WordType.Datetime;
+                }
+                else if (IsString())
+                {
+                    Value = Value.Trim('\"');
+                    Type = WordType.String;
+                }
+                else if (IsBoolean())
+                {
+                    Type = WordType.Boolean;
+                }
+                else if (IsNumber())
+                {
+                    Type = WordType.Number;
+                }
+                else if (IsStringArray())
+                {
+                    Type = WordType.StringArray;
+                }
+                else
+                {
+                    Type = WordType.Unknown;
+                }
+            }
+
+            /// <summary>
+            /// 是否操作符
+            /// </summary>
+            private bool IsOperator()
+            {
+                return precedence.ContainsKey(Value);
+            }
+
+            /// <summary>
+            /// 是否是数字（包括负数）
+            /// </summary>
+            private bool IsNumber()
+            {
+                return Regex.IsMatch(Value, @"^-?\d+(\.\d+)?$");
+            }
+
+            /// <summary>
+            /// 是否日期类型(四种格式类型)
+            /// </summary>
+            private bool IsDatetime()
+            {
+                return Regex.IsMatch(Value, @"^""\d{4}(-|/)\d{2}(-|/)\d{2}( \d{2}:\d{2}:\d{2})?""$");
+            }
+
+            /// <summary>
+            /// 是否字符串
+            /// </summary>
+            private bool IsString()
+            {
+                return (!IsDatetime()) && Value.StartsWith("\"") && Value.EndsWith("\"");
+            }
+
+            /// <summary>
+            /// 是否布尔值
+            /// </summary>
+            private bool IsBoolean()
+            {
+                return Value == "True" || Value == "False" || Value == "true" || Value == "false";
+            }
+
+            /// <summary>
+            /// 是否JSON字符串数组
+            /// </summary>
+            private bool IsStringArray()
+            {
+                return Regex.IsMatch(Value, @"^\[\s*""([^""\\]*(\\.[^""\\]*)*)""(\s*,\s*""([^""\\]*(\\.[^""\\]*)*)"")*\s*\]$");
             }
         }
 
