@@ -48,9 +48,6 @@ namespace ConsoleApp5
         /// </summary>
         private ExpressionNode EvaluateTree(ExpressionNode node)
         {
-            if (node == null)
-                return null;
-
             if (node.Type == ExpressionNodeType.Operator)
             {
                 var leftResult = EvaluateTree(node.Left);
