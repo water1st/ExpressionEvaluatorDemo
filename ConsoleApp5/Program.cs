@@ -8,7 +8,39 @@ namespace ExpressionEvaluator
     {
         static void Main(string[] args)
         {
-            BenchmarkRunner.Run<Benchmark>();
+            //BenchmarkRunner.Run<Benchmark>();
+
+
+            string[] expressions = new string[]
+                {
+                        //"1+2*3 == 5",
+                        //"(1+2) * 3 / 3.14 + 5 - 3",
+                        //"1 == 2",
+                        //"1!=2",
+                        //"-11>=-5.6",
+                        //"\"bob\" == \"jan\"",
+                        //"1<2.2",
+                        //"\"2022-11-21\" > \"2019-11-22 23:46:22\"",
+                        //"1>=2",
+                        //"1<=2",
+                        //"[\"bob\",\"jack\"] ## \"bob\"",
+                        //"[\"bob\",\"jack\"] ## \"ben\"",
+                        //"[\"bob\",\"jack\"] !# \"bob\"",
+                        //"[\"bob\",\"jack\"] !# \"jan\"",
+                        //"[\"bob\",\"jack\"] !# [\"jan\"]",
+                        //"[\"bob\",\"jack\"] ## [\"jan\"]",
+                        "1==1 && 1<2",
+                        "1==1 || 2==1",
+                        "1==3 || true == false",
+                        "true==false && 3==1"
+                };
+
+            var e = new Evaluator();
+            foreach (var ex in expressions)
+            {
+                Console.WriteLine($"表达式 {ex} 的结果为 {e.Evaluate(ex)}");
+
+            }
         }
     }
 
