@@ -41,7 +41,7 @@ namespace ExpressionEvaluator
         private IEvaluator etEvaluator = new ExpressionTreeEvaluator();
         private IEvaluator rnpEvaluator = new ExpressionTreeEvaluator();
 
-        [Benchmark(OperationsPerInvoke = 10000, Description = "逆波兰表达式实现")]
+        [Benchmark(OperationsPerInvoke = 10000, Description = "RPN实现")]
         public void RunRPNEvaluator()
         {
             foreach (var expression in expressions)
@@ -50,7 +50,7 @@ namespace ExpressionEvaluator
             }
         }
 
-        [Benchmark(OperationsPerInvoke = 10000, Description = "中序二叉树实现")]
+        [Benchmark(OperationsPerInvoke = 10000, Description = "BST实现")]
         public void RunETEvaluator()
         {
             foreach (var expression in expressions)
