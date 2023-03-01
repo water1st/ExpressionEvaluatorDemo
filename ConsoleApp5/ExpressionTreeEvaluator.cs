@@ -1,13 +1,14 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace ConsoleApp5
 {
-    public interface IEvaluator
-    {
-        string Evaluate(string expression);
-    }
-    public class Evaluator : IEvaluator
+    public class ExpressionTreeEvaluator : IEvaluator
     {
         /// <summary>
         /// 操作符和优先级
@@ -31,52 +32,57 @@ namespace ConsoleApp5
         });
 
         /// <summary>
-        /// 运算表达式
+        /// 计算表达式
         /// </summary>
         public string Evaluate(string expression)
         {
-            //分词并且按照逆波兰表达式排序
-            var words = ConvertToRPN(Tokenize(expression));
+            //分词
+            var tokens = Tokenize(expression);
 
-            //结果栈
-            var stack = new Stack<Word>();
+            //构建表达式树
+            var root = BuildTree(tokens);
 
-            foreach (var word in words)
-            {
-                // 如果不是操作符直接入栈
-                if (word.Type != WordType.Operator)
-                {
-                    stack.Push(word);
-                }
-                //如果是操作符，则出栈两个操作数，并进行相应的运算，然后将结果入栈
-                else
-                {
-                    var right = stack.Pop();
-                    var left = stack.Pop();
-                    var result = Calculate(left, right, word);
+            //运算表达式树的值
+            var result = EvaluateTree(root);
 
-                    stack.Push(result);
-                }
-            }
-
-            // 最后栈中只剩下一个元素，即为最终结果
-            return stack.Pop();
+            return result;
         }
 
         /// <summary>
-        /// 计算结果
+        /// 计算表达式树的值
         /// </summary>
-        private Word Calculate(Word left, Word right, Word @operator)
+        private ExpressionNode EvaluateTree(ExpressionNode node)
         {
-            var result = new Word();
+            if (node == null)
+                return null;
+
+            if (node.Type == ExpressionNodeType.Operator)
+            {
+                var leftResult = EvaluateTree(node.Left);
+                var rightResult = EvaluateTree(node.Right);
+
+                return Calculate(leftResult, rightResult, node);
+            }
+            else
+            {
+                return node;
+            }
+        }
+
+        /// <summary>
+        /// 计算
+        /// </summary>
+        private ExpressionNode Calculate(ExpressionNode left, ExpressionNode right, ExpressionNode @operator)
+        {
+            var result = new ExpressionNode();
 
             switch (@operator.Value)
             {
                 case "+":
-                    if (left.Type == WordType.Number && right.Type == WordType.Number)
+                    if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
                         result.Value = (decimal.Parse(left.Value) + decimal.Parse(right.Value)).ToString();
-                        result.Type = WordType.Number;
+                        result.Type = ExpressionNodeType.Number;
                     }
                     else
                     {
@@ -84,10 +90,10 @@ namespace ConsoleApp5
                     }
                     break;
                 case "-":
-                    if (left.Type == WordType.Number && right.Type == WordType.Number)
+                    if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
                         result.Value = (decimal.Parse(left.Value) - decimal.Parse(right.Value)).ToString();
-                        result.Type = WordType.Number;
+                        result.Type = ExpressionNodeType.Number;
                     }
                     else
                     {
@@ -95,10 +101,10 @@ namespace ConsoleApp5
                     }
                     break;
                 case "*":
-                    if (left.Type == WordType.Number && right.Type == WordType.Number)
+                    if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
                         result.Value = (decimal.Parse(left.Value) * decimal.Parse(right.Value)).ToString();
-                        result.Type = WordType.Number;
+                        result.Type = ExpressionNodeType.Number;
                     }
                     else
                     {
@@ -106,10 +112,10 @@ namespace ConsoleApp5
                     }
                     break;
                 case "/":
-                    if (left.Type == WordType.Number && right.Type == WordType.Number)
+                    if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
                         result.Value = (decimal.Parse(left.Value) / decimal.Parse(right.Value)).ToString();
-                        result.Type = WordType.Number;
+                        result.Type = ExpressionNodeType.Number;
                     }
                     else
                     {
@@ -117,19 +123,19 @@ namespace ConsoleApp5
                     }
                     break;
                 case "==":
-                    if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
+                    if (left.Type == ExpressionNodeType.Datetime && right.Type == ExpressionNodeType.Datetime)
                     {
                         result.Value = (DateTime.Parse(left.Value) == DateTime.Parse(right.Value)).ToString();
                     }
-                    else if (left.Type == WordType.Boolean && right.Type == WordType.Boolean)
+                    else if (left.Type == ExpressionNodeType.Boolean && right.Type == ExpressionNodeType.Boolean)
                     {
                         result.Value = (bool.Parse(left.Value) == bool.Parse(right.Value)).ToString();
                     }
-                    else if (left.Type == WordType.Number && right.Type == WordType.Number)
+                    else if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
                         result.Value = (decimal.Parse(left.Value) == decimal.Parse(right.Value)).ToString();
                     }
-                    else if (left.Type == WordType.String && right.Type == WordType.String)
+                    else if (left.Type == ExpressionNodeType.String && right.Type == ExpressionNodeType.String)
                     {
                         result.Value = (left.Value == right.Value).ToString();
                     }
@@ -137,22 +143,22 @@ namespace ConsoleApp5
                     {
                         throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
                     }
-                    result.Type = WordType.Boolean;
+                    result.Type = ExpressionNodeType.Boolean;
                     break;
                 case "!=":
-                    if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
+                    if (left.Type == ExpressionNodeType.Datetime && right.Type == ExpressionNodeType.Datetime)
                     {
                         result.Value = (DateTime.Parse(left.Value) != DateTime.Parse(right.Value)).ToString();
                     }
-                    else if (left.Type == WordType.Boolean && right.Type == WordType.Boolean)
+                    else if (left.Type == ExpressionNodeType.Boolean && right.Type == ExpressionNodeType.Boolean)
                     {
                         result.Value = (bool.Parse(left.Value) != bool.Parse(right.Value)).ToString();
                     }
-                    else if (left.Type == WordType.Number && right.Type == WordType.Number)
+                    else if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
                         result.Value = (decimal.Parse(left.Value) != decimal.Parse(right.Value)).ToString();
                     }
-                    else if (left.Type == WordType.String && right.Type == WordType.String)
+                    else if (left.Type == ExpressionNodeType.String && right.Type == ExpressionNodeType.String)
                     {
                         result.Value = (left.Value != right.Value).ToString();
                     }
@@ -160,14 +166,14 @@ namespace ConsoleApp5
                     {
                         throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
                     }
-                    result.Type = WordType.Boolean;
+                    result.Type = ExpressionNodeType.Boolean;
                     break;
                 case ">":
-                    if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
+                    if (left.Type == ExpressionNodeType.Datetime && right.Type == ExpressionNodeType.Datetime)
                     {
                         result.Value = (DateTime.Parse(left.Value) > DateTime.Parse(right.Value)).ToString();
                     }
-                    else if (left.Type == WordType.Number && right.Type == WordType.Number)
+                    else if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
                         result.Value = (decimal.Parse(left.Value) > decimal.Parse(right.Value)).ToString();
                     }
@@ -175,14 +181,14 @@ namespace ConsoleApp5
                     {
                         throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
                     }
-                    result.Type = WordType.Boolean;
+                    result.Type = ExpressionNodeType.Boolean;
                     break;
                 case "<":
-                    if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
+                    if (left.Type == ExpressionNodeType.Datetime && right.Type == ExpressionNodeType.Datetime)
                     {
                         result.Value = (DateTime.Parse(left.Value) < DateTime.Parse(right.Value)).ToString();
                     }
-                    else if (left.Type == WordType.Number && right.Type == WordType.Number)
+                    else if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
                         result.Value = (decimal.Parse(left.Value) < decimal.Parse(right.Value)).ToString();
                     }
@@ -190,14 +196,14 @@ namespace ConsoleApp5
                     {
                         throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
                     }
-                    result.Type = WordType.Boolean;
+                    result.Type = ExpressionNodeType.Boolean;
                     break;
                 case ">=":
-                    if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
+                    if (left.Type == ExpressionNodeType.Datetime && right.Type == ExpressionNodeType.Datetime)
                     {
                         result.Value = (DateTime.Parse(left.Value) >= DateTime.Parse(right.Value)).ToString();
                     }
-                    else if (left.Type == WordType.Number && right.Type == WordType.Number)
+                    else if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
                         result.Value = (decimal.Parse(left.Value) >= decimal.Parse(right.Value)).ToString();
                     }
@@ -205,14 +211,14 @@ namespace ConsoleApp5
                     {
                         throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
                     }
-                    result.Type = WordType.Boolean;
+                    result.Type = ExpressionNodeType.Boolean;
                     break;
                 case "<=":
-                    if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
+                    if (left.Type == ExpressionNodeType.Datetime && right.Type == ExpressionNodeType.Datetime)
                     {
                         result.Value = (DateTime.Parse(left.Value) <= DateTime.Parse(right.Value)).ToString();
                     }
-                    else if (left.Type == WordType.Number && right.Type == WordType.Number)
+                    else if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
                         result.Value = (decimal.Parse(left.Value) <= decimal.Parse(right.Value)).ToString();
                     }
@@ -220,17 +226,17 @@ namespace ConsoleApp5
                     {
                         throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
                     }
-                    result.Type = WordType.Boolean;
+                    result.Type = ExpressionNodeType.Boolean;
                     break;
                 case "##":
-                    if (left.Type == WordType.StringArray && (right.Type == WordType.String || right.Type == WordType.StringArray))
+                    if (left.Type == ExpressionNodeType.StringArray && (right.Type == ExpressionNodeType.String || right.Type == ExpressionNodeType.StringArray))
                     {
                         var array = Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(left.Value);
-                        if (right.Type == WordType.String)
+                        if (right.Type == ExpressionNodeType.String)
                         {
                             result.Value = array.Contains(right.Value).ToString();
                         }
-                        else if (right.Type == WordType.StringArray)
+                        else if (right.Type == ExpressionNodeType.StringArray)
                         {
                             var arrayRight = Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(right.Value);
                             var rsl = true;
@@ -246,7 +252,7 @@ namespace ConsoleApp5
                         {
                             result.Value = false.ToString();
                         }
-                        result.Type = WordType.Boolean;
+                        result.Type = ExpressionNodeType.Boolean;
                     }
                     else
                     {
@@ -254,14 +260,14 @@ namespace ConsoleApp5
                     }
                     break;
                 case "!#":
-                    if (left.Type == WordType.StringArray && (right.Type == WordType.String || right.Type == WordType.StringArray))
+                    if (left.Type == ExpressionNodeType.StringArray && (right.Type == ExpressionNodeType.String || right.Type == ExpressionNodeType.StringArray))
                     {
                         var array = Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(left.Value);
-                        if (right.Type == WordType.String)
+                        if (right.Type == ExpressionNodeType.String)
                         {
                             result.Value = (!array.Contains(right.Value)).ToString();
                         }
-                        else if (right.Type == WordType.StringArray)
+                        else if (right.Type == ExpressionNodeType.StringArray)
                         {
                             var arrayRight = Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(right.Value);
                             var rsl = true;
@@ -277,7 +283,7 @@ namespace ConsoleApp5
                         {
                             result.Value = true.ToString();
                         }
-                        result.Type = WordType.Boolean;
+                        result.Type = ExpressionNodeType.Boolean;
                     }
                     else
                     {
@@ -290,34 +296,43 @@ namespace ConsoleApp5
             return result;
         }
 
-        /// <summary>
-        /// 转换为逆波兰表达式
-        /// </summary>
-        private IEnumerable<Word> ConvertToRPN(IEnumerable<Word> words)
+        private ExpressionNode BuildTree(IEnumerable<ExpressionNode> nodes)
         {
-            //结果队列
-            var result = new Queue<Word>();
+            //结果栈
+            var result = new Stack<ExpressionNode>();
             //操作符栈
-            var stack = new Stack<Word>();
+            var stack = new Stack<ExpressionNode>();
 
-            foreach (var word in words)
+            void SetChildNode()
             {
-                if (word.Type == WordType.Unknown)
+                var parent = stack.Pop();
+                var right = result.Pop();
+                var left = result.Pop();
+
+                parent.Left = left;
+                parent.Right = right;
+
+                result.Push(parent);
+            }
+
+            foreach (var node in nodes)
+            {
+                if (node.Type == ExpressionNodeType.Unknown)
                     continue;
 
                 //如果不是操作符，则直接入列
-                if (word.Type != WordType.Operator)
+                if (node.Type != ExpressionNodeType.Operator)
                 {
-                    result.Enqueue(word);
+                    result.Push(node);
                 }
                 else
                 {
-                    if (word == ")")
+                    if (node == ")")
                     {
                         //如果是右括号，则出栈入列直到遇到左括号
                         while (stack.Count > 0 && stack.Peek() != "(")
                         {
-                            result.Enqueue(stack.Pop());
+                            SetChildNode();
                         }
                         //如果是左括号，则出栈并丢弃
                         if (stack.Count > 0 && stack.Peek() == "(")
@@ -328,63 +343,61 @@ namespace ConsoleApp5
                     else
                     {
                         //如果栈顶的操作符优先级大于目前操作符，则需要出栈入列
-                        while (stack.Count > 0 && precedence[word.Value] <= precedence[stack.Peek()])
+                        while (stack.Count > 0 && precedence[node.Value] <= precedence[stack.Peek()])
                         {
-                            result.Enqueue(stack.Pop());
+                            SetChildNode();
                         }
 
                         //将当前操作符入栈
-                        stack.Push(word);
+                        stack.Push(node);
                     }
                 }
             }
 
-            //将栈内剩余操作符入列
-            while (stack.Count > 0)
+            while (result.Count > 1)
             {
-                result.Enqueue(stack.Pop());
+                SetChildNode();
             }
 
-            return result;
+            return result.Pop();
         }
 
         /// <summary>
         /// 分词和标记单词类型
         /// </summary>
-        private IEnumerable<Word> Tokenize(string expression)
+        private IEnumerable<ExpressionNode> Tokenize(string expression)
         {
             var regex = new Regex("[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]");
+            var x = regex.Matches(expression).Select(x => x.Value).ToArray();
             foreach (Match match in regex.Matches(expression))
             {
                 yield return match.Value;
             }
         }
 
-
-        /// <summary>
-        /// 单词
-        /// </summary>
-        private class Word
+        private class ExpressionNode
         {
-            public Word(string value)
+            public ExpressionNode(string value)
             {
                 Value = value;
                 SetType();
             }
 
-            public Word() { }
+            public ExpressionNode() { }
 
             public string Value { get; set; }
-            public WordType Type { get; set; }
+            public ExpressionNode Left { get; set; }
+            public ExpressionNode Right { get; set; }
+            public ExpressionNodeType Type { get; set; }
 
-            public static implicit operator string(Word word)
+            public static implicit operator string(ExpressionNode word)
             {
                 return word.ToString();
             }
 
-            public static implicit operator Word(string word)
+            public static implicit operator ExpressionNode(string word)
             {
-                return new Word(word);
+                return new ExpressionNode(word);
             }
 
             public override string ToString()
@@ -396,37 +409,37 @@ namespace ConsoleApp5
             {
                 if (string.IsNullOrWhiteSpace(Value) || Value == string.Empty)
                 {
-                    Type = WordType.Unknown;
+                    Type = ExpressionNodeType.Unknown;
                 }
                 else if (IsOperator())
                 {
-                    Type = WordType.Operator;
+                    Type = ExpressionNodeType.Operator;
                 }
                 else if (IsDatetime())
                 {
                     Value = Value.Trim('\"');
-                    Type = WordType.Datetime;
+                    Type = ExpressionNodeType.Datetime;
                 }
                 else if (IsString())
                 {
                     Value = Value.Trim('\"');
-                    Type = WordType.String;
+                    Type = ExpressionNodeType.String;
                 }
                 else if (IsBoolean())
                 {
-                    Type = WordType.Boolean;
+                    Type = ExpressionNodeType.Boolean;
                 }
                 else if (IsNumber())
                 {
-                    Type = WordType.Number;
+                    Type = ExpressionNodeType.Number;
                 }
                 else if (IsStringArray())
                 {
-                    Type = WordType.StringArray;
+                    Type = ExpressionNodeType.StringArray;
                 }
                 else
                 {
-                    Type = WordType.Unknown;
+                    Type = ExpressionNodeType.Unknown;
                 }
             }
 
@@ -480,9 +493,9 @@ namespace ConsoleApp5
         }
 
         /// <summary>
-        /// 单词类型
+        /// 节点类型
         /// </summary>
-        private enum WordType
+        private enum ExpressionNodeType
         {
             Unknown = 0,
             Number = 1,
@@ -493,6 +506,4 @@ namespace ConsoleApp5
             StringArray = 6
         }
     }
-
-
 }
