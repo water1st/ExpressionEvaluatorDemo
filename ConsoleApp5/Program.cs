@@ -72,14 +72,14 @@ namespace ExpressionEvaluator
 
 
         private IEvaluator betEvaluator = new BETEvaluator();
-        private IEvaluator rnpEvaluator = new RPNEvaluator();
+        private IEvaluator rpnEvaluator = new RPNEvaluator();
 
         [Benchmark(OperationsPerInvoke = 10000, Description = "RPN实现")]
         public void RunRPNEvaluator()
         {
             foreach (var expression in expressions)
             {
-                rnpEvaluator.Evaluate(expression);
+                rpnEvaluator.Evaluate(expression);
             }
         }
 
