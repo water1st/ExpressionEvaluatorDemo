@@ -120,7 +120,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                        ThrowException(left, right, @operator);
                     }
                     break;
                 case OPERATOR_SUBTRACT:
@@ -131,7 +131,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                        ThrowException(left, right, @operator);
                     }
                     break;
                 case OPERATOR_MULTIPLY:
@@ -142,7 +142,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                        ThrowException(left, right, @operator);
                     }
                     break;
                 case OPERATOR_DIVIDE:
@@ -153,7 +153,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                        ThrowException(left, right, @operator);
                     }
                     break;
                 case OPERATOR_EQUAL:
@@ -175,7 +175,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                        ThrowException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -198,7 +198,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                        ThrowException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -213,7 +213,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                        ThrowException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -228,7 +228,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                        ThrowException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -243,7 +243,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                        ThrowException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -258,7 +258,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                        ThrowException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -293,7 +293,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                        ThrowException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -328,7 +328,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                        ThrowException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -340,7 +340,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                        ThrowException(left, right, @operator);
                     }
                     break;
                 case OPERATOR_OR:
@@ -351,13 +351,19 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
+                        ThrowException(left, right, @operator);
                     }
                     break;
 
             }
 
             return result;
+        }
+
+        private void ThrowException(ExpressionNode left, ExpressionNode right, ExpressionNode @operator)
+        {
+            const string message = "不支持{0}类型数据{1}和{2}类型数据{3}进行{4}运算";
+            throw new InvalidOperationException(string.Format(message, left.Type, left.Value, right.Type, right.Value, @operator.ToString()));
         }
 
         /// <summary>
@@ -434,7 +440,8 @@ namespace ConsoleApp5
         /// </summary>
         private IEnumerable<ExpressionNode> Tokenize(string expression)
         {
-            var regex = new Regex("[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|(&&)|(\\|\\|)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]");
+            const string pattern = "[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|(&&)|(\\|\\|)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]";
+            var regex = new Regex(pattern);
 
             foreach (Match match in regex.Matches(expression))
             {
@@ -526,7 +533,8 @@ namespace ConsoleApp5
             /// </summary>
             private bool IsNumber()
             {
-                return Regex.IsMatch(Value, @"^-?\d+(\.\d+)?$");
+                const string pattern = @"^-?\d+(\.\d+)?$";
+                return Regex.IsMatch(Value, pattern);
             }
 
             /// <summary>
@@ -534,7 +542,8 @@ namespace ConsoleApp5
             /// </summary>
             private bool IsDatetime()
             {
-                return Regex.IsMatch(Value, @"^""\d{4}(-|/)\d{2}(-|/)\d{2}( \d{2}:\d{2}:\d{2})?""$");
+                const string pattern = @"^""\d{4}(-|/)\d{2}(-|/)\d{2}( \d{2}:\d{2}:\d{2})?""$";
+                return Regex.IsMatch(Value, pattern);
             }
 
             /// <summary>
@@ -550,7 +559,12 @@ namespace ConsoleApp5
             /// </summary>
             private bool IsBoolean()
             {
-                return Value == "True" || Value == "False" || Value == "true" || Value == "false";
+                const string TRUE_0 = "True";
+                const string FALSE_0 = "False";
+                const string TRUE_1 = "true";
+                const string FALSE_1 = "false";
+
+                return Value == TRUE_0 || Value == FALSE_0 || Value == TRUE_1 || Value == FALSE_1;
             }
 
             /// <summary>
@@ -558,7 +572,8 @@ namespace ConsoleApp5
             /// </summary>
             private bool IsStringArray()
             {
-                return Regex.IsMatch(Value, @"^\[\s*""([^""\\]*(\\.[^""\\]*)*)""(\s*,\s*""([^""\\]*(\\.[^""\\]*)*)"")*\s*\]$");
+                const string pattern = @"^\[\s*""([^""\\]*(\\.[^""\\]*)*)""(\s*,\s*""([^""\\]*(\\.[^""\\]*)*)"")*\s*\]$";
+                return Regex.IsMatch(Value, pattern);
             }
         }
 
