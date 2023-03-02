@@ -32,7 +32,7 @@ namespace ExpressionEvaluator
                         "true==false && 3==1"
                 };
 
-            var evaluator = new Evaluator();
+            var evaluator = new RPNEvaluator();
             foreach (var expression in expressions)
             {
                 Console.WriteLine($"表达式 {expression} 的结果为 {evaluator.Evaluate(expression)}");
@@ -71,8 +71,8 @@ namespace ExpressionEvaluator
                 };
 
 
-        private IEvaluator etEvaluator = new ExpressionTreeEvaluator();
-        private IEvaluator rnpEvaluator = new ExpressionTreeEvaluator();
+        private IEvaluator etEvaluator = new BSTEvaluator();
+        private IEvaluator rnpEvaluator = new BSTEvaluator();
 
         [Benchmark(OperationsPerInvoke = 10000, Description = "RPN实现")]
         public void RunRPNEvaluator()

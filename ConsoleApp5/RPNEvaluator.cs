@@ -7,7 +7,7 @@ namespace ConsoleApp5
     {
         string Evaluate(string expression);
     }
-    public class Evaluator : IEvaluator
+    public class RPNEvaluator : IEvaluator
     {
         private const string OPERATOR_LEFT_PARENTHESIS = "(";
         private const string OPERATOR_RIGHT_PARENTHESIS = ")";
