@@ -393,7 +393,7 @@ namespace ConsoleApp5
                 if (node.Type == ExpressionNodeType.Unknown)
                     continue;
 
-                //如果不是操作符，则直接入列
+                //如果不是操作符，则直接压到结果栈
                 if (node.Type != ExpressionNodeType.Operator)
                 {
                     result.Push(node);
@@ -402,7 +402,8 @@ namespace ConsoleApp5
                 {
                     if (node == OPERATOR_RIGHT_PARENTHESIS)
                     {
-                        //如果是右括号，则出栈入列直到遇到左括号
+                        //如果当前操作符是右括号)，则在操作符栈出栈，从结果栈出栈为子节点，
+                        //设置完子节点后，把操作符栈压到结果栈
                         while (stack.Count > 0 && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
                         {
                             SetChildNode();
@@ -415,13 +416,14 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        //如果栈顶的操作符优先级大于目前操作符，则需要出栈入列
+                        //如果栈顶的操作符优先级大于目前操作符，则在操作符栈出栈，
+                        //从结果栈出栈为子节点，设置完子节点后，把操作符栈压到结果栈
                         while (stack.Count > 0 && precedence[node.Value] <= precedence[stack.Peek()])
                         {
                             SetChildNode();
                         }
 
-                        //将当前操作符入栈
+                        //将当前操作符压到操作符栈
                         stack.Push(node);
                     }
                 }
