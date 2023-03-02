@@ -25,6 +25,7 @@ namespace ConsoleApp5
         private const string OPERATOR_SUBTRACT = "-";
         private const string OPERATOR_MULTIPLY = "*";
         private const string OPERATOR_DIVIDE = "/";
+        private const char CHAR_DOUBLE_QUOTE = '\"';
 
         private const byte PRECEDENCE_0 = 0;
         private const byte PRECEDENCE_1 = 1;
@@ -383,15 +384,15 @@ namespace ConsoleApp5
                 }
                 else
                 {
-                    if (word == ")")
+                    if (word == OPERATOR_RIGHT_PARENTHESIS)
                     {
                         //如果是右括号，则出栈入列直到遇到左括号
-                        while (stack.Count > 0 && stack.Peek() != "(")
+                        while (stack.Count > 0 && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
                         {
                             result.Enqueue(stack.Pop());
                         }
                         //如果是左括号，则出栈并丢弃
-                        if (stack.Count > 0 && stack.Peek() == "(")
+                        if (stack.Count > 0 && stack.Peek() == OPERATOR_LEFT_PARENTHESIS)
                         {
                             stack.Pop();
                         }
@@ -475,12 +476,12 @@ namespace ConsoleApp5
                 }
                 else if (IsDatetime())
                 {
-                    Value = Value.Trim('\"');
+                    Value = Value.Trim(CHAR_DOUBLE_QUOTE);
                     Type = WordType.Datetime;
                 }
                 else if (IsString())
                 {
-                    Value = Value.Trim('\"');
+                    Value = Value.Trim(CHAR_DOUBLE_QUOTE);
                     Type = WordType.String;
                 }
                 else if (IsBoolean())
@@ -530,7 +531,7 @@ namespace ConsoleApp5
             /// </summary>
             private bool IsString()
             {
-                return (!IsDatetime()) && Value.StartsWith("\"") && Value.EndsWith("\"");
+                return (!IsDatetime()) && Value.StartsWith(CHAR_DOUBLE_QUOTE) && Value.EndsWith(CHAR_DOUBLE_QUOTE);
             }
 
             /// <summary>
