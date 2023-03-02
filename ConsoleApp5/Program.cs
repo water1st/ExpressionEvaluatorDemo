@@ -83,8 +83,8 @@ namespace ExpressionEvaluator
             }
         }
 
-        [Benchmark(OperationsPerInvoke = 10000, Description = "BST实现")]
-        public void RunETEvaluator()
+        [Benchmark(OperationsPerInvoke = 10000, Description = "BET实现")]
+        public void RunBETEvaluator()
         {
             foreach (var expression in expressions)
             {
