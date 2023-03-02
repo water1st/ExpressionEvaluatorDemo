@@ -9,27 +9,66 @@ namespace ConsoleApp5
     }
     public class Evaluator : IEvaluator
     {
+        private const string OPERATOR_LEFT_PARENTHESIS = "(";
+        private const string OPERATOR_RIGHT_PARENTHESIS = ")";
+        private const string OPERATOR_AND = "&&";
+        private const string OPERATOR_OR = "||";
+        private const string OPERATOR_EQUAL = "==";
+        private const string OPERATOR_NOT_EQUAL = "!=";
+        private const string OPERATOR_CONTAIN = "##";
+        private const string OPERATOR_NOT_CONTAIN = "!#";
+        private const string OPERATOR_GREATER_THAN = ">";
+        private const string OPERATOR_GREATER_THAN_OR_EQUAL_TO = ">=";
+        private const string OPERATOR_LESS_THAN = "<";
+        private const string OPERATOR_LESS_THAN_OR_EQUAL_TO = "<=";
+        private const string OPERATOR_ADD = "+";
+        private const string OPERATOR_SUBTRACT = "-";
+        private const string OPERATOR_MULTIPLY = "*";
+        private const string OPERATOR_DIVIDE = "/";
+
+        private const byte PRECEDENCE_0 = 0;
+        private const byte PRECEDENCE_1 = 1;
+        private const byte PRECEDENCE_2 = 2;
+        private const byte PRECEDENCE_3 = 3;
+        private const byte PRECEDENCE_4 = 4;
+        private const byte PRECEDENCE_5 = 5;
         /// <summary>
         /// 操作符和优先级
         /// </summary>
-        protected static readonly IReadOnlyDictionary<string, int> precedence = new ReadOnlyDictionary<string, int>(new Dictionary<string, int>
+        protected static readonly IReadOnlyDictionary<string, byte> precedence = new ReadOnlyDictionary<string, byte>(new Dictionary<string, byte>
         {
-            {"(", 0},
-            {")", 0},
-            {"&&", 1},
-            {"||", 1},
-            {"==", 2},
-            {"!=", 2},
-            {"##", 2},
-            {"!#", 2},
-            {">", 3},
-            {">=", 3},
-            {"<", 3},
-            {"<=", 3},
-            {"+", 4},
-            {"-", 4},
-            {"*", 5},
-            {"/", 5}
+            // (
+            {OPERATOR_LEFT_PARENTHESIS, PRECEDENCE_0},
+            // )
+            {OPERATOR_RIGHT_PARENTHESIS, PRECEDENCE_0},
+            // &&
+            {OPERATOR_AND, PRECEDENCE_1},
+            // ||
+            {OPERATOR_OR, PRECEDENCE_1},
+            // ==
+            {OPERATOR_EQUAL, PRECEDENCE_2},
+            // !=
+            {OPERATOR_NOT_EQUAL, PRECEDENCE_2},
+            // ##
+            {OPERATOR_CONTAIN, PRECEDENCE_2},
+            // !#
+            {OPERATOR_NOT_CONTAIN, PRECEDENCE_2},
+            // >
+            {OPERATOR_GREATER_THAN, PRECEDENCE_3},
+            // >=
+            {OPERATOR_GREATER_THAN_OR_EQUAL_TO, PRECEDENCE_3},
+            // <
+            {OPERATOR_LESS_THAN, PRECEDENCE_3},
+            // <=
+            {OPERATOR_LESS_THAN_OR_EQUAL_TO, PRECEDENCE_3},
+            // +
+            {OPERATOR_ADD, PRECEDENCE_4},
+            // -
+            {OPERATOR_SUBTRACT, PRECEDENCE_4},
+            // *
+            {OPERATOR_MULTIPLY, PRECEDENCE_5},
+            // /
+            {OPERATOR_DIVIDE, PRECEDENCE_5}
         });
 
         /// <summary>
@@ -74,7 +113,7 @@ namespace ConsoleApp5
 
             switch (@operator.Value)
             {
-                case "+":
+                case OPERATOR_ADD:
                     if (left.Type == WordType.Number && right.Type == WordType.Number)
                     {
                         result.Value = (decimal.Parse(left.Value) + decimal.Parse(right.Value)).ToString();
@@ -85,7 +124,7 @@ namespace ConsoleApp5
                         throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
                     }
                     break;
-                case "-":
+                case OPERATOR_SUBTRACT:
                     if (left.Type == WordType.Number && right.Type == WordType.Number)
                     {
                         result.Value = (decimal.Parse(left.Value) - decimal.Parse(right.Value)).ToString();
@@ -96,7 +135,7 @@ namespace ConsoleApp5
                         throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
                     }
                     break;
-                case "*":
+                case OPERATOR_MULTIPLY:
                     if (left.Type == WordType.Number && right.Type == WordType.Number)
                     {
                         result.Value = (decimal.Parse(left.Value) * decimal.Parse(right.Value)).ToString();
@@ -107,7 +146,7 @@ namespace ConsoleApp5
                         throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
                     }
                     break;
-                case "/":
+                case OPERATOR_DIVIDE:
                     if (left.Type == WordType.Number && right.Type == WordType.Number)
                     {
                         result.Value = (decimal.Parse(left.Value) / decimal.Parse(right.Value)).ToString();
@@ -118,7 +157,7 @@ namespace ConsoleApp5
                         throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
                     }
                     break;
-                case "==":
+                case OPERATOR_EQUAL:
                     if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
                     {
                         result.Value = (DateTime.Parse(left.Value) == DateTime.Parse(right.Value)).ToString();
@@ -141,7 +180,7 @@ namespace ConsoleApp5
                     }
                     result.Type = WordType.Boolean;
                     break;
-                case "!=":
+                case OPERATOR_NOT_EQUAL:
                     if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
                     {
                         result.Value = (DateTime.Parse(left.Value) != DateTime.Parse(right.Value)).ToString();
@@ -164,7 +203,7 @@ namespace ConsoleApp5
                     }
                     result.Type = WordType.Boolean;
                     break;
-                case ">":
+                case OPERATOR_GREATER_THAN:
                     if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
                     {
                         result.Value = (DateTime.Parse(left.Value) > DateTime.Parse(right.Value)).ToString();
@@ -179,7 +218,7 @@ namespace ConsoleApp5
                     }
                     result.Type = WordType.Boolean;
                     break;
-                case "<":
+                case OPERATOR_LESS_THAN:
                     if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
                     {
                         result.Value = (DateTime.Parse(left.Value) < DateTime.Parse(right.Value)).ToString();
@@ -194,7 +233,7 @@ namespace ConsoleApp5
                     }
                     result.Type = WordType.Boolean;
                     break;
-                case ">=":
+                case OPERATOR_GREATER_THAN_OR_EQUAL_TO:
                     if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
                     {
                         result.Value = (DateTime.Parse(left.Value) >= DateTime.Parse(right.Value)).ToString();
@@ -209,7 +248,7 @@ namespace ConsoleApp5
                     }
                     result.Type = WordType.Boolean;
                     break;
-                case "<=":
+                case OPERATOR_LESS_THAN_OR_EQUAL_TO:
                     if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
                     {
                         result.Value = (DateTime.Parse(left.Value) <= DateTime.Parse(right.Value)).ToString();
@@ -224,7 +263,7 @@ namespace ConsoleApp5
                     }
                     result.Type = WordType.Boolean;
                     break;
-                case "##":
+                case OPERATOR_CONTAIN:
                     if (left.Type == WordType.StringArray && (right.Type == WordType.String || right.Type == WordType.StringArray))
                     {
                         var array = Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(left.Value);
@@ -248,14 +287,18 @@ namespace ConsoleApp5
                         {
                             result.Value = false.ToString();
                         }
-                        result.Type = WordType.Boolean;
+                    }
+                    else if (left.Type == WordType.String && right.Type == WordType.String)
+                    {
+                        result.Value = (left.Value.Contains(right.Value)).ToString();
                     }
                     else
                     {
                         throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
                     }
+                    result.Type = WordType.Boolean;
                     break;
-                case "!#":
+                case OPERATOR_NOT_CONTAIN:
                     if (left.Type == WordType.StringArray && (right.Type == WordType.String || right.Type == WordType.StringArray))
                     {
                         var array = Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(left.Value);
@@ -279,14 +322,18 @@ namespace ConsoleApp5
                         {
                             result.Value = true.ToString();
                         }
-                        result.Type = WordType.Boolean;
+                    }
+                    else if (left.Type == WordType.String && right.Type == WordType.String)
+                    {
+                        result.Value = (!left.Value.Contains(right.Value)).ToString();
                     }
                     else
                     {
                         throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
                     }
+                    result.Type = WordType.Boolean;
                     break;
-                case "&&":
+                case OPERATOR_AND:
                     if (left.Type == WordType.Boolean && right.Type == WordType.Boolean)
                     {
                         result.Value = (bool.Parse(left.Value) && bool.Parse(right.Value)).ToString();
@@ -297,7 +344,7 @@ namespace ConsoleApp5
                         throw new InvalidOperationException($"不支持{left.Type}类型数据{left.Value}和{right.Type}类型数据{right.Value}进行{@operator}运算");
                     }
                     break;
-                case "||":
+                case OPERATOR_OR:
                     if (left.Type == WordType.Boolean && right.Type == WordType.Boolean)
                     {
                         result.Value = (bool.Parse(left.Value) || bool.Parse(right.Value)).ToString();
