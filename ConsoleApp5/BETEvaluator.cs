@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace ConsoleApp5
 {
-    public class BSTEvaluator : IEvaluator
+    public class BETEvaluator : IEvaluator
     {
         private const string OPERATOR_LEFT_PARENTHESIS = "(";
         private const string OPERATOR_RIGHT_PARENTHESIS = ")";

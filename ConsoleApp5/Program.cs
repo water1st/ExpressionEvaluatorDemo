@@ -71,8 +71,8 @@ namespace ExpressionEvaluator
                 };
 
 
-        private IEvaluator etEvaluator = new BSTEvaluator();
-        private IEvaluator rnpEvaluator = new BSTEvaluator();
+        private IEvaluator betEvaluator = new BETEvaluator();
+        private IEvaluator rnpEvaluator = new RPNEvaluator();
 
         [Benchmark(OperationsPerInvoke = 10000, Description = "RPN实现")]
         public void RunRPNEvaluator()
@@ -88,7 +88,7 @@ namespace ExpressionEvaluator
         {
             foreach (var expression in expressions)
             {
-                etEvaluator.Evaluate(expression);
+                betEvaluator.Evaluate(expression);
             }
         }
     }
