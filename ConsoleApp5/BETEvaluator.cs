@@ -418,7 +418,7 @@ namespace ConsoleApp5
                     {
                         //如果栈顶的操作符优先级大于目前操作符，则在操作符栈出栈，
                         //从结果栈出栈为子节点，设置完子节点后，把操作符栈压到结果栈
-                        while (stack.Count > 0 && precedence[node.Value] <= precedence[stack.Peek()])
+                        while (node != OPERATOR_LEFT_PARENTHESIS && stack.Count > 0 && precedence[node.Value] <= precedence[stack.Peek()])
                         {
                             SetChildNode();
                         }

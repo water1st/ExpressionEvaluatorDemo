@@ -380,7 +380,6 @@ namespace ConsoleApp5
             var result = new Queue<Word>();
             //操作符栈
             var stack = new Stack<Word>();
-
             foreach (var word in words)
             {
                 if (word.Type == WordType.Unknown)
@@ -409,7 +408,7 @@ namespace ConsoleApp5
                     else
                     {
                         //如果栈顶的操作符优先级大于目前操作符，则需要出栈入列
-                        while (stack.Count > 0 && precedence[word.Value] <= precedence[stack.Peek()])
+                        while (word != OPERATOR_LEFT_PARENTHESIS && stack.Count > 0 && precedence[word.Value] <= precedence[stack.Peek()])
                         {
                             result.Enqueue(stack.Pop());
                         }
