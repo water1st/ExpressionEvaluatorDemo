@@ -447,8 +447,7 @@ namespace ConsoleApp5
 
             var matches = regex.Matches(expression);
 
-            var left = zero;
-            var right = zero;
+            var parenthesis = zero;
 
             var result = new Word[matches.Count];
 
@@ -456,14 +455,14 @@ namespace ConsoleApp5
             {
                 Word value = matches[i].Value;
                 if (value == OPERATOR_LEFT_PARENTHESIS)
-                    left++;
+                    parenthesis++;
                 else if (value == OPERATOR_RIGHT_PARENTHESIS)
-                    right++;
+                    parenthesis--;
 
                 result[i] = value;
             }
 
-            if (left != right)
+            if (parenthesis != zero)
             {
                 const string exceptionMessage = "表达式错误!表达式括号数量不相等";
                 throw new ArgumentException(exceptionMessage);
