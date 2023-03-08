@@ -107,9 +107,9 @@ namespace ConsoleApp5
                 {
                     var right = stack.Pop();
                     var left = stack.Pop();
-                    var result = Calculate(left, right, word);
+                    Calculate(left, right, word);
 
-                    stack.Push(result);
+                    stack.Push(word);
                 }
             }
 
@@ -123,17 +123,15 @@ namespace ConsoleApp5
         /// <summary>
         /// 计算结果
         /// </summary>
-        private Word Calculate(Word left, Word right, Word @operator)
+        private void Calculate(Word left, Word right, Word @operator)
         {
-            var result = new Word();
-
             switch (@operator.Value)
             {
                 case OPERATOR_ADD:
                     if (left.Type == WordType.Number && right.Type == WordType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) + decimal.Parse(right.Value)).ToString();
-                        result.Type = WordType.Number;
+                        @operator.Value = (decimal.Parse(left.Value) + decimal.Parse(right.Value)).ToString();
+                        @operator.Type = WordType.Number;
                     }
                     else
                     {
@@ -143,8 +141,8 @@ namespace ConsoleApp5
                 case OPERATOR_SUBTRACT:
                     if (left.Type == WordType.Number && right.Type == WordType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) - decimal.Parse(right.Value)).ToString();
-                        result.Type = WordType.Number;
+                        @operator.Value = (decimal.Parse(left.Value) - decimal.Parse(right.Value)).ToString();
+                        @operator.Type = WordType.Number;
                     }
                     else
                     {
@@ -154,8 +152,8 @@ namespace ConsoleApp5
                 case OPERATOR_MULTIPLY:
                     if (left.Type == WordType.Number && right.Type == WordType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) * decimal.Parse(right.Value)).ToString();
-                        result.Type = WordType.Number;
+                        @operator.Value = (decimal.Parse(left.Value) * decimal.Parse(right.Value)).ToString();
+                        @operator.Type = WordType.Number;
                     }
                     else
                     {
@@ -165,8 +163,8 @@ namespace ConsoleApp5
                 case OPERATOR_DIVIDE:
                     if (left.Type == WordType.Number && right.Type == WordType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) / decimal.Parse(right.Value)).ToString();
-                        result.Type = WordType.Number;
+                        @operator.Value = (decimal.Parse(left.Value) / decimal.Parse(right.Value)).ToString();
+                        @operator.Type = WordType.Number;
                     }
                     else
                     {
@@ -176,108 +174,108 @@ namespace ConsoleApp5
                 case OPERATOR_EQUAL:
                     if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
                     {
-                        result.Value = (DateTime.Parse(left.Value) == DateTime.Parse(right.Value)).ToString();
+                        @operator.Value = (DateTime.Parse(left.Value) == DateTime.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == WordType.Boolean && right.Type == WordType.Boolean)
                     {
-                        result.Value = (bool.Parse(left.Value) == bool.Parse(right.Value)).ToString();
+                        @operator.Value = (bool.Parse(left.Value) == bool.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == WordType.Number && right.Type == WordType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) == decimal.Parse(right.Value)).ToString();
+                        @operator.Value = (decimal.Parse(left.Value) == decimal.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == WordType.String && right.Type == WordType.String)
                     {
-                        result.Value = (left.Value == right.Value).ToString();
+                        @operator.Value = (left.Value == right.Value).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = WordType.Boolean;
+                    @operator.Type = WordType.Boolean;
                     break;
                 case OPERATOR_NOT_EQUAL:
                     if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
                     {
-                        result.Value = (DateTime.Parse(left.Value) != DateTime.Parse(right.Value)).ToString();
+                        @operator.Value = (DateTime.Parse(left.Value) != DateTime.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == WordType.Boolean && right.Type == WordType.Boolean)
                     {
-                        result.Value = (bool.Parse(left.Value) != bool.Parse(right.Value)).ToString();
+                        @operator.Value = (bool.Parse(left.Value) != bool.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == WordType.Number && right.Type == WordType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) != decimal.Parse(right.Value)).ToString();
+                        @operator.Value = (decimal.Parse(left.Value) != decimal.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == WordType.String && right.Type == WordType.String)
                     {
-                        result.Value = (left.Value != right.Value).ToString();
+                        @operator.Value = (left.Value != right.Value).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = WordType.Boolean;
+                    @operator.Type = WordType.Boolean;
                     break;
                 case OPERATOR_GREATER_THAN:
                     if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
                     {
-                        result.Value = (DateTime.Parse(left.Value) > DateTime.Parse(right.Value)).ToString();
+                        @operator.Value = (DateTime.Parse(left.Value) > DateTime.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == WordType.Number && right.Type == WordType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) > decimal.Parse(right.Value)).ToString();
+                        @operator.Value = (decimal.Parse(left.Value) > decimal.Parse(right.Value)).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = WordType.Boolean;
+                    @operator.Type = WordType.Boolean;
                     break;
                 case OPERATOR_LESS_THAN:
                     if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
                     {
-                        result.Value = (DateTime.Parse(left.Value) < DateTime.Parse(right.Value)).ToString();
+                        @operator.Value = (DateTime.Parse(left.Value) < DateTime.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == WordType.Number && right.Type == WordType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) < decimal.Parse(right.Value)).ToString();
+                        @operator.Value = (decimal.Parse(left.Value) < decimal.Parse(right.Value)).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = WordType.Boolean;
+                    @operator.Type = WordType.Boolean;
                     break;
                 case OPERATOR_GREATER_THAN_OR_EQUAL_TO:
                     if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
                     {
-                        result.Value = (DateTime.Parse(left.Value) >= DateTime.Parse(right.Value)).ToString();
+                        @operator.Value = (DateTime.Parse(left.Value) >= DateTime.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == WordType.Number && right.Type == WordType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) >= decimal.Parse(right.Value)).ToString();
+                        @operator.Value = (decimal.Parse(left.Value) >= decimal.Parse(right.Value)).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = WordType.Boolean;
+                    @operator.Type = WordType.Boolean;
                     break;
                 case OPERATOR_LESS_THAN_OR_EQUAL_TO:
                     if (left.Type == WordType.Datetime && right.Type == WordType.Datetime)
                     {
-                        result.Value = (DateTime.Parse(left.Value) <= DateTime.Parse(right.Value)).ToString();
+                        @operator.Value = (DateTime.Parse(left.Value) <= DateTime.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == WordType.Number && right.Type == WordType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) <= decimal.Parse(right.Value)).ToString();
+                        @operator.Value = (decimal.Parse(left.Value) <= decimal.Parse(right.Value)).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = WordType.Boolean;
+                    @operator.Type = WordType.Boolean;
                     break;
                 case OPERATOR_CONTAIN:
                     if (left.Type == WordType.StringArray && (right.Type == WordType.String || right.Type == WordType.StringArray))
@@ -285,7 +283,7 @@ namespace ConsoleApp5
                         var array = Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(left.Value);
                         if (right.Type == WordType.String)
                         {
-                            result.Value = array.Contains(right.Value).ToString();
+                            @operator.Value = array.Contains(right.Value).ToString();
                         }
                         else if (right.Type == WordType.StringArray)
                         {
@@ -297,22 +295,22 @@ namespace ConsoleApp5
                                     break;
                                 rsl = rsl && array.Contains(rightString);
                             }
-                            result.Value = rsl.ToString();
+                            @operator.Value = rsl.ToString();
                         }
                         else
                         {
-                            result.Value = false.ToString();
+                            @operator.Value = false.ToString();
                         }
                     }
                     else if (left.Type == WordType.String && right.Type == WordType.String)
                     {
-                        result.Value = (left.Value.Contains(right.Value)).ToString();
+                        @operator.Value = (left.Value.Contains(right.Value)).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = WordType.Boolean;
+                    @operator.Type = WordType.Boolean;
                     break;
                 case OPERATOR_NOT_CONTAIN:
                     if (left.Type == WordType.StringArray && (right.Type == WordType.String || right.Type == WordType.StringArray))
@@ -320,7 +318,7 @@ namespace ConsoleApp5
                         var array = Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(left.Value);
                         if (right.Type == WordType.String)
                         {
-                            result.Value = (!array.Contains(right.Value)).ToString();
+                            @operator.Value = (!array.Contains(right.Value)).ToString();
                         }
                         else if (right.Type == WordType.StringArray)
                         {
@@ -332,28 +330,28 @@ namespace ConsoleApp5
                                     break;
                                 rsl = rsl && array.Contains(rightString);
                             }
-                            result.Value = (!rsl).ToString();
+                            @operator.Value = (!rsl).ToString();
                         }
                         else
                         {
-                            result.Value = true.ToString();
+                            @operator.Value = true.ToString();
                         }
                     }
                     else if (left.Type == WordType.String && right.Type == WordType.String)
                     {
-                        result.Value = (!left.Value.Contains(right.Value)).ToString();
+                        @operator.Value = (!left.Value.Contains(right.Value)).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = WordType.Boolean;
+                    @operator.Type = WordType.Boolean;
                     break;
                 case OPERATOR_AND:
                     if (left.Type == WordType.Boolean && right.Type == WordType.Boolean)
                     {
-                        result.Value = (bool.Parse(left.Value) && bool.Parse(right.Value)).ToString();
-                        result.Type = WordType.Boolean;
+                        @operator.Value = (bool.Parse(left.Value) && bool.Parse(right.Value)).ToString();
+                        @operator.Type = WordType.Boolean;
                     }
                     else
                     {
@@ -363,8 +361,8 @@ namespace ConsoleApp5
                 case OPERATOR_OR:
                     if (left.Type == WordType.Boolean && right.Type == WordType.Boolean)
                     {
-                        result.Value = (bool.Parse(left.Value) || bool.Parse(right.Value)).ToString();
-                        result.Type = WordType.Boolean;
+                        @operator.Value = (bool.Parse(left.Value) || bool.Parse(right.Value)).ToString();
+                        @operator.Type = WordType.Boolean;
                     }
                     else
                     {
@@ -373,8 +371,6 @@ namespace ConsoleApp5
                     break;
 
             }
-
-            return result;
         }
 
         private void ThrowNotSupportException(Word left, Word right, Word @operator)
