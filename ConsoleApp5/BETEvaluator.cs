@@ -448,15 +448,16 @@ namespace ConsoleApp5
         private IEnumerable<ExpressionNode> Tokenize(string expression)
         {
             const string pattern = "[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|(&&)|(\\|\\|)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]";
+            const int zero = 0;
             var regex = new Regex(pattern);
 
             var matches = regex.Matches(expression);
 
-            var parenthesis = 0;
+            var parenthesis = zero;
 
             var result = new ExpressionNode[matches.Count];
 
-            for (var i = 0; i < matches.Count; i++)
+            for (var i = zero; i < matches.Count; i++)
             {
                 ExpressionNode value = matches[i].Value;
                 if (value == OPERATOR_LEFT_PARENTHESIS || value == OPERATOR_RIGHT_PARENTHESIS)
@@ -465,7 +466,7 @@ namespace ConsoleApp5
                 result[i] = value;
             }
 
-            if (parenthesis % 2 != 0)
+            if (parenthesis % 2 != zero)
             {
                 const string exceptionMessage = "表达式错误!表达式括号不相等";
                 throw new ArgumentException(exceptionMessage);
@@ -605,7 +606,7 @@ namespace ConsoleApp5
         /// <summary>
         /// 节点类型
         /// </summary>
-        private enum ExpressionNodeType
+        private enum ExpressionNodeType : byte
         {
             Unknown = 0,
             Number = 1,
