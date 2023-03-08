@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using ConsoleApp5;
-using System.Linq.Expressions;
 
 namespace ExpressionEvaluator
 {
