@@ -104,28 +104,24 @@ namespace ConsoleApp5
                 var leftResult = EvaluateTree(node.Left);
                 var rightResult = EvaluateTree(node.Right);
 
-                return Calculate(leftResult, rightResult, node);
+                Calculate(leftResult, rightResult, node);
             }
-            else
-            {
-                return node;
-            }
+
+            return node;
         }
 
         /// <summary>
         /// 计算
         /// </summary>
-        private ExpressionNode Calculate(ExpressionNode left, ExpressionNode right, ExpressionNode @operator)
+        private void Calculate(ExpressionNode left, ExpressionNode right, ExpressionNode @operator)
         {
-            var result = new ExpressionNode();
-
             switch (@operator.Value)
             {
                 case OPERATOR_ADD:
                     if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) + decimal.Parse(right.Value)).ToString();
-                        result.Type = ExpressionNodeType.Number;
+                        @operator.Value = (decimal.Parse(left.Value) + decimal.Parse(right.Value)).ToString();
+                        @operator.Type = ExpressionNodeType.Number;
                     }
                     else
                     {
@@ -135,8 +131,8 @@ namespace ConsoleApp5
                 case OPERATOR_SUBTRACT:
                     if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) - decimal.Parse(right.Value)).ToString();
-                        result.Type = ExpressionNodeType.Number;
+                        @operator.Value = (decimal.Parse(left.Value) - decimal.Parse(right.Value)).ToString();
+                        @operator.Type = ExpressionNodeType.Number;
                     }
                     else
                     {
@@ -146,8 +142,8 @@ namespace ConsoleApp5
                 case OPERATOR_MULTIPLY:
                     if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) * decimal.Parse(right.Value)).ToString();
-                        result.Type = ExpressionNodeType.Number;
+                        @operator.Value = (decimal.Parse(left.Value) * decimal.Parse(right.Value)).ToString();
+                        @operator.Type = ExpressionNodeType.Number;
                     }
                     else
                     {
@@ -157,8 +153,8 @@ namespace ConsoleApp5
                 case OPERATOR_DIVIDE:
                     if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) / decimal.Parse(right.Value)).ToString();
-                        result.Type = ExpressionNodeType.Number;
+                        @operator.Value = (decimal.Parse(left.Value) / decimal.Parse(right.Value)).ToString();
+                        @operator.Type = ExpressionNodeType.Number;
                     }
                     else
                     {
@@ -168,108 +164,108 @@ namespace ConsoleApp5
                 case OPERATOR_EQUAL:
                     if (left.Type == ExpressionNodeType.Datetime && right.Type == ExpressionNodeType.Datetime)
                     {
-                        result.Value = (DateTime.Parse(left.Value) == DateTime.Parse(right.Value)).ToString();
+                        @operator.Value = (DateTime.Parse(left.Value) == DateTime.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == ExpressionNodeType.Boolean && right.Type == ExpressionNodeType.Boolean)
                     {
-                        result.Value = (bool.Parse(left.Value) == bool.Parse(right.Value)).ToString();
+                        @operator.Value = (bool.Parse(left.Value) == bool.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) == decimal.Parse(right.Value)).ToString();
+                        @operator.Value = (decimal.Parse(left.Value) == decimal.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == ExpressionNodeType.String && right.Type == ExpressionNodeType.String)
                     {
-                        result.Value = (left.Value == right.Value).ToString();
+                        @operator.Value = (left.Value == right.Value).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = ExpressionNodeType.Boolean;
+                    @operator.Type = ExpressionNodeType.Boolean;
                     break;
                 case OPERATOR_NOT_EQUAL:
                     if (left.Type == ExpressionNodeType.Datetime && right.Type == ExpressionNodeType.Datetime)
                     {
-                        result.Value = (DateTime.Parse(left.Value) != DateTime.Parse(right.Value)).ToString();
+                        @operator.Value = (DateTime.Parse(left.Value) != DateTime.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == ExpressionNodeType.Boolean && right.Type == ExpressionNodeType.Boolean)
                     {
-                        result.Value = (bool.Parse(left.Value) != bool.Parse(right.Value)).ToString();
+                        @operator.Value = (bool.Parse(left.Value) != bool.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) != decimal.Parse(right.Value)).ToString();
+                        @operator.Value = (decimal.Parse(left.Value) != decimal.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == ExpressionNodeType.String && right.Type == ExpressionNodeType.String)
                     {
-                        result.Value = (left.Value != right.Value).ToString();
+                        @operator.Value = (left.Value != right.Value).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = ExpressionNodeType.Boolean;
+                    @operator.Type = ExpressionNodeType.Boolean;
                     break;
                 case OPERATOR_GREATER_THAN:
                     if (left.Type == ExpressionNodeType.Datetime && right.Type == ExpressionNodeType.Datetime)
                     {
-                        result.Value = (DateTime.Parse(left.Value) > DateTime.Parse(right.Value)).ToString();
+                        @operator.Value = (DateTime.Parse(left.Value) > DateTime.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) > decimal.Parse(right.Value)).ToString();
+                        @operator.Value = (decimal.Parse(left.Value) > decimal.Parse(right.Value)).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = ExpressionNodeType.Boolean;
+                    @operator.Type = ExpressionNodeType.Boolean;
                     break;
                 case OPERATOR_LESS_THAN:
                     if (left.Type == ExpressionNodeType.Datetime && right.Type == ExpressionNodeType.Datetime)
                     {
-                        result.Value = (DateTime.Parse(left.Value) < DateTime.Parse(right.Value)).ToString();
+                        @operator.Value = (DateTime.Parse(left.Value) < DateTime.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) < decimal.Parse(right.Value)).ToString();
+                        @operator.Value = (decimal.Parse(left.Value) < decimal.Parse(right.Value)).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = ExpressionNodeType.Boolean;
+                    @operator.Type = ExpressionNodeType.Boolean;
                     break;
                 case OPERATOR_GREATER_THAN_OR_EQUAL_TO:
                     if (left.Type == ExpressionNodeType.Datetime && right.Type == ExpressionNodeType.Datetime)
                     {
-                        result.Value = (DateTime.Parse(left.Value) >= DateTime.Parse(right.Value)).ToString();
+                        @operator.Value = (DateTime.Parse(left.Value) >= DateTime.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) >= decimal.Parse(right.Value)).ToString();
+                        @operator.Value = (decimal.Parse(left.Value) >= decimal.Parse(right.Value)).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = ExpressionNodeType.Boolean;
+                    @operator.Type = ExpressionNodeType.Boolean;
                     break;
                 case OPERATOR_LESS_THAN_OR_EQUAL_TO:
                     if (left.Type == ExpressionNodeType.Datetime && right.Type == ExpressionNodeType.Datetime)
                     {
-                        result.Value = (DateTime.Parse(left.Value) <= DateTime.Parse(right.Value)).ToString();
+                        @operator.Value = (DateTime.Parse(left.Value) <= DateTime.Parse(right.Value)).ToString();
                     }
                     else if (left.Type == ExpressionNodeType.Number && right.Type == ExpressionNodeType.Number)
                     {
-                        result.Value = (decimal.Parse(left.Value) <= decimal.Parse(right.Value)).ToString();
+                        @operator.Value = (decimal.Parse(left.Value) <= decimal.Parse(right.Value)).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = ExpressionNodeType.Boolean;
+                    @operator.Type = ExpressionNodeType.Boolean;
                     break;
                 case OPERATOR_CONTAIN:
                     if (left.Type == ExpressionNodeType.StringArray && (right.Type == ExpressionNodeType.String || right.Type == ExpressionNodeType.StringArray))
@@ -277,7 +273,7 @@ namespace ConsoleApp5
                         var array = Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(left.Value);
                         if (right.Type == ExpressionNodeType.String)
                         {
-                            result.Value = array.Contains(right.Value).ToString();
+                            @operator.Value = array.Contains(right.Value).ToString();
                         }
                         else if (right.Type == ExpressionNodeType.StringArray)
                         {
@@ -289,22 +285,22 @@ namespace ConsoleApp5
                                     break;
                                 rsl = rsl && array.Contains(rightString);
                             }
-                            result.Value = rsl.ToString();
+                            @operator.Value = rsl.ToString();
                         }
                         else
                         {
-                            result.Value = false.ToString();
+                            @operator.Value = false.ToString();
                         }
                     }
                     else if (left.Type == ExpressionNodeType.String && right.Type == ExpressionNodeType.String)
                     {
-                        result.Value = (left.Value.Contains(right.Value)).ToString();
+                        @operator.Value = (left.Value.Contains(right.Value)).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = ExpressionNodeType.Boolean;
+                    @operator.Type = ExpressionNodeType.Boolean;
                     break;
                 case OPERATOR_NOT_CONTAIN:
                     if (left.Type == ExpressionNodeType.StringArray && (right.Type == ExpressionNodeType.String || right.Type == ExpressionNodeType.StringArray))
@@ -312,7 +308,7 @@ namespace ConsoleApp5
                         var array = Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(left.Value);
                         if (right.Type == ExpressionNodeType.String)
                         {
-                            result.Value = (!array.Contains(right.Value)).ToString();
+                            @operator.Value = (!array.Contains(right.Value)).ToString();
                         }
                         else if (right.Type == ExpressionNodeType.StringArray)
                         {
@@ -324,28 +320,28 @@ namespace ConsoleApp5
                                     break;
                                 rsl = rsl && array.Contains(rightString);
                             }
-                            result.Value = (!rsl).ToString();
+                            @operator.Value = (!rsl).ToString();
                         }
                         else
                         {
-                            result.Value = true.ToString();
+                            @operator.Value = true.ToString();
                         }
                     }
                     else if (left.Type == ExpressionNodeType.String && right.Type == ExpressionNodeType.String)
                     {
-                        result.Value = (!left.Value.Contains(right.Value)).ToString();
+                        @operator.Value = (!left.Value.Contains(right.Value)).ToString();
                     }
                     else
                     {
                         ThrowNotSupportException(left, right, @operator);
                     }
-                    result.Type = ExpressionNodeType.Boolean;
+                    @operator.Type = ExpressionNodeType.Boolean;
                     break;
                 case OPERATOR_AND:
                     if (left.Type == ExpressionNodeType.Boolean && right.Type == ExpressionNodeType.Boolean)
                     {
-                        result.Value = (bool.Parse(left.Value) && bool.Parse(right.Value)).ToString();
-                        result.Type = ExpressionNodeType.Boolean;
+                        @operator.Value = (bool.Parse(left.Value) && bool.Parse(right.Value)).ToString();
+                        @operator.Type = ExpressionNodeType.Boolean;
                     }
                     else
                     {
@@ -355,8 +351,8 @@ namespace ConsoleApp5
                 case OPERATOR_OR:
                     if (left.Type == ExpressionNodeType.Boolean && right.Type == ExpressionNodeType.Boolean)
                     {
-                        result.Value = (bool.Parse(left.Value) || bool.Parse(right.Value)).ToString();
-                        result.Type = ExpressionNodeType.Boolean;
+                        @operator.Value = (bool.Parse(left.Value) || bool.Parse(right.Value)).ToString();
+                        @operator.Type = ExpressionNodeType.Boolean;
                     }
                     else
                     {
@@ -365,8 +361,6 @@ namespace ConsoleApp5
                     break;
 
             }
-
-            return result;
         }
 
         private void ThrowNotSupportException(ExpressionNode left, ExpressionNode right, ExpressionNode @operator)

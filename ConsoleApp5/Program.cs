@@ -1,6 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using ConsoleApp5;
+using System.Linq.Expressions;
 
 namespace ExpressionEvaluator
 {
@@ -8,8 +9,25 @@ namespace ExpressionEvaluator
     {
         static void Main(string[] args)
         {
-            string[] expressions = new string[]
-                {
+            var bet = new BETEvaluator();
+            var rpn = new RPNEvaluator();
+
+            PrintResultToConsole("RPN", rpn);
+            PrintResultToConsole("BET", rpn);
+
+
+            BenchmarkRunner.Run<Benchmark>();
+        }
+
+        private static void PrintResultToConsole(string name, IEvaluator evaluator)
+        {
+            Console.WriteLine("=============================================================================================");
+            Console.WriteLine($"                                            {name}");
+            Console.WriteLine("=============================================================================================");
+            Console.WriteLine();
+
+            var expressions = new string[]
+            {
                         "1+2*3 == 5",
                         "(1+2) * 3 / 3.14 + 5 - 3",
                         "(((1+2) * 3 / 3.14 + 5 - 3) == (4+6)) || (1/3 + (3+5) == 8)",
@@ -31,18 +49,15 @@ namespace ExpressionEvaluator
                         "1==1 || 2==1",
                         "1==3 || true == false",
                         "true==false && 3==1"
-                };
+            };
 
-            var evaluator = new RPNEvaluator();
             foreach (var expression in expressions)
             {
                 Console.WriteLine($"表达式 {expression} 的结果为 {evaluator.Evaluate(expression)}");
             }
 
             Console.WriteLine();
-
-
-            BenchmarkRunner.Run<Benchmark>();
+            Console.WriteLine("=============================================================================================");
         }
     }
 
