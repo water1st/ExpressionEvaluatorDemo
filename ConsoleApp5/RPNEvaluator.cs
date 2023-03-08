@@ -508,6 +508,9 @@ namespace ConsoleApp5
                 return Value;
             }
 
+            /// <summary>
+            /// 设置类型
+            /// </summary>
             private void SetType()
             {
                 if (string.IsNullOrWhiteSpace(Value) || Value == string.Empty)

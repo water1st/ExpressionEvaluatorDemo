@@ -5,6 +5,7 @@ namespace ConsoleApp5
 {
     public class BETEvaluator : IEvaluator
     {
+        #region 操作符
         private const string OPERATOR_LEFT_PARENTHESIS = "(";
         private const string OPERATOR_RIGHT_PARENTHESIS = ")";
         private const string OPERATOR_AND = "&&";
@@ -21,16 +22,19 @@ namespace ConsoleApp5
         private const string OPERATOR_SUBTRACT = "-";
         private const string OPERATOR_MULTIPLY = "*";
         private const string OPERATOR_DIVIDE = "/";
-        
+        #endregion
 
+        #region 优先级
         private const byte PRECEDENCE_0 = 0;
         private const byte PRECEDENCE_1 = 1;
         private const byte PRECEDENCE_2 = 2;
         private const byte PRECEDENCE_3 = 3;
         private const byte PRECEDENCE_4 = 4;
         private const byte PRECEDENCE_5 = 5;
+        #endregion
+
         /// <summary>
-        /// 操作符和优先级
+        /// 操作符和优先级映射字典
         /// </summary>
         protected static readonly IReadOnlyDictionary<string, byte> precedence = new ReadOnlyDictionary<string, byte>(new Dictionary<string, byte>
         {
@@ -511,6 +515,9 @@ namespace ConsoleApp5
                 return Value;
             }
 
+            /// <summary>
+            /// 设置类型
+            /// </summary>
             private void SetType()
             {
                 if (string.IsNullOrWhiteSpace(Value) || Value == string.Empty)
