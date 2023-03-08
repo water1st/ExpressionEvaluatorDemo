@@ -13,7 +13,7 @@ namespace ExpressionEvaluator
             var rpn = new RPNEvaluator();
 
             PrintResultToConsole("RPN", rpn);
-            PrintResultToConsole("BET", rpn);
+            PrintResultToConsole("BET", bet);
 
 
             BenchmarkRunner.Run<Benchmark>();
