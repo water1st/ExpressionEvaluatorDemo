@@ -447,22 +447,25 @@ namespace ConsoleApp5
 
             var matches = regex.Matches(expression);
 
-            var parenthesis = zero;
+            var left = zero;
+            var right = zero;
 
             var result = new Word[matches.Count];
 
             for (var i = zero; i < matches.Count; i++)
             {
                 Word value = matches[i].Value;
-                if (value == OPERATOR_LEFT_PARENTHESIS || value == OPERATOR_RIGHT_PARENTHESIS)
-                    parenthesis++;
+                if (value == OPERATOR_LEFT_PARENTHESIS)
+                    left++;
+                else if (value == OPERATOR_RIGHT_PARENTHESIS)
+                    right++;
 
                 result[i] = value;
             }
 
-            if (parenthesis % 2 != zero)
+            if (left != right)
             {
-                const string exceptionMessage = "表达式错误!表达式括号不相等";
+                const string exceptionMessage = "表达式错误!表达式括号数量不相等";
                 throw new ArgumentException(exceptionMessage);
             }
 
