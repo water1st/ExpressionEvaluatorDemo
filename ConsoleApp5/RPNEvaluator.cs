@@ -77,8 +77,18 @@ namespace ConsoleApp5
         /// </summary>
         public string Evaluate(string expression)
         {
-            //分词并且按照逆波兰表达式排序
-            var words = ConvertToRPN(Tokenize(expression));
+            if (string.IsNullOrWhiteSpace(expression))
+            {
+                throw new ArgumentException($"“{nameof(expression)}”不能为 null 或空白。", nameof(expression));
+            }
+            //分词
+            var tokens = Tokenize(expression);
+
+            //校验表达式
+            ValidateTokens(tokens);
+
+            //转为逆波兰表达式
+            var words = ConvertToRPN(tokens);
 
             //结果栈
             var stack = new Stack<Word>();
@@ -368,7 +378,19 @@ namespace ConsoleApp5
         private void ThrowException(Word left, Word right, Word @operator)
         {
             const string message = "不支持{0}类型数据{1}和{2}类型数据{3}进行{4}运算";
-            throw new InvalidOperationException(string.Format(message, left.Type, left.Value, right.Type, right.Value, @operator.ToString()));
+            throw new NotSupportedException(string.Format(message, left.Type, left.Value, right.Type, right.Value, @operator.ToString()));
+        }
+
+        /// <summary>
+        /// 表达式校验
+        /// </summary>
+        private void ValidateTokens(IEnumerable<Word> words)
+        {
+            var left = words.Count(word => word == OPERATOR_LEFT_PARENTHESIS);
+            var right = words.Count(word => word == OPERATOR_RIGHT_PARENTHESIS);
+
+            if (left != right)
+                throw new ArgumentException("表达式错误!表达式括号不相等");
         }
 
         /// <summary>

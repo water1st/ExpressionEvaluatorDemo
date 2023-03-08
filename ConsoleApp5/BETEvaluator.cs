@@ -73,8 +73,15 @@ namespace ConsoleApp5
         /// </summary>
         public string Evaluate(string expression)
         {
+            if (string.IsNullOrWhiteSpace(expression))
+            {
+                throw new ArgumentException($"“{nameof(expression)}”不能为 null 或空白。", nameof(expression));
+            }
             //分词
             var tokens = Tokenize(expression);
+
+            //校验表达式
+            ValidateTokens(tokens);
 
             //构建表达式树
             var root = BuildTree(tokens);
@@ -363,7 +370,7 @@ namespace ConsoleApp5
         private void ThrowException(ExpressionNode left, ExpressionNode right, ExpressionNode @operator)
         {
             const string message = "不支持{0}类型数据{1}和{2}类型数据{3}进行{4}运算";
-            throw new InvalidOperationException(string.Format(message, left.Type, left.Value, right.Type, right.Value, @operator.ToString()));
+            throw new NotSupportedException(string.Format(message, left.Type, left.Value, right.Type, right.Value, @operator.ToString()));
         }
 
         /// <summary>
@@ -449,6 +456,18 @@ namespace ConsoleApp5
             {
                 yield return match.Value;
             }
+        }
+
+        /// <summary>
+        /// 表达式校验
+        /// </summary>
+        private void ValidateTokens(IEnumerable<ExpressionNode> nodes)
+        {
+            var left = nodes.Count(node => node == OPERATOR_LEFT_PARENTHESIS);
+            var right = nodes.Count(node => node == OPERATOR_RIGHT_PARENTHESIS);
+
+            if (left != right)
+                throw new ArgumentException("表达式错误!表达式括号不相等");
         }
 
         /// <summary>
