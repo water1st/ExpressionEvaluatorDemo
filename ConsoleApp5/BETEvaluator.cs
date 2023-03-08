@@ -75,7 +75,8 @@ namespace ConsoleApp5
         {
             if (string.IsNullOrWhiteSpace(expression))
             {
-                throw new ArgumentException($"“{nameof(expression)}”不能为 null 或空白。", nameof(expression));
+                const string nullExceptionMessage = "{0}不能为 null 或空白。";
+                throw new ArgumentException(string.Format(nullExceptionMessage, nameof(expression)));
             }
             //分词
             var tokens = Tokenize(expression);
@@ -127,7 +128,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        ThrowException(left, right, @operator);
+                        ThrowNotSupportException(left, right, @operator);
                     }
                     break;
                 case OPERATOR_SUBTRACT:
@@ -138,7 +139,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        ThrowException(left, right, @operator);
+                        ThrowNotSupportException(left, right, @operator);
                     }
                     break;
                 case OPERATOR_MULTIPLY:
@@ -149,7 +150,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        ThrowException(left, right, @operator);
+                        ThrowNotSupportException(left, right, @operator);
                     }
                     break;
                 case OPERATOR_DIVIDE:
@@ -160,7 +161,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        ThrowException(left, right, @operator);
+                        ThrowNotSupportException(left, right, @operator);
                     }
                     break;
                 case OPERATOR_EQUAL:
@@ -182,7 +183,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        ThrowException(left, right, @operator);
+                        ThrowNotSupportException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -205,7 +206,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        ThrowException(left, right, @operator);
+                        ThrowNotSupportException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -220,7 +221,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        ThrowException(left, right, @operator);
+                        ThrowNotSupportException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -235,7 +236,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        ThrowException(left, right, @operator);
+                        ThrowNotSupportException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -250,7 +251,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        ThrowException(left, right, @operator);
+                        ThrowNotSupportException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -265,7 +266,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        ThrowException(left, right, @operator);
+                        ThrowNotSupportException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -300,7 +301,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        ThrowException(left, right, @operator);
+                        ThrowNotSupportException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -335,7 +336,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        ThrowException(left, right, @operator);
+                        ThrowNotSupportException(left, right, @operator);
                     }
                     result.Type = ExpressionNodeType.Boolean;
                     break;
@@ -347,7 +348,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        ThrowException(left, right, @operator);
+                        ThrowNotSupportException(left, right, @operator);
                     }
                     break;
                 case OPERATOR_OR:
@@ -358,7 +359,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
-                        ThrowException(left, right, @operator);
+                        ThrowNotSupportException(left, right, @operator);
                     }
                     break;
 
@@ -367,7 +368,7 @@ namespace ConsoleApp5
             return result;
         }
 
-        private void ThrowException(ExpressionNode left, ExpressionNode right, ExpressionNode @operator)
+        private void ThrowNotSupportException(ExpressionNode left, ExpressionNode right, ExpressionNode @operator)
         {
             const string message = "不支持{0}类型数据{1}和{2}类型数据{3}进行{4}运算";
             throw new NotSupportedException(string.Format(message, left.Type, left.Value, right.Type, right.Value, @operator.ToString()));
@@ -467,7 +468,10 @@ namespace ConsoleApp5
             var right = nodes.Count(node => node == OPERATOR_RIGHT_PARENTHESIS);
 
             if (left != right)
-                throw new ArgumentException("表达式错误!表达式括号不相等");
+            {
+                const string exceptionMessage = "表达式错误!表达式括号不相等";
+                throw new ArgumentException(exceptionMessage);
+            }
         }
 
         /// <summary>
