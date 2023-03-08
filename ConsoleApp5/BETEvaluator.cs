@@ -81,9 +81,6 @@ namespace ConsoleApp5
             //分词
             var tokens = Tokenize(expression);
 
-            //校验表达式
-            ValidateTokens(tokens);
-
             //构建表达式树
             var root = BuildTree(tokens);
 
@@ -453,25 +450,31 @@ namespace ConsoleApp5
             const string pattern = "[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|(&&)|(\\|\\|)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]";
             var regex = new Regex(pattern);
 
-            foreach (Match match in regex.Matches(expression))
-            {
-                yield return match.Value;
-            }
-        }
+            var matches = regex.Matches(expression);
 
-        /// <summary>
-        /// 表达式校验
-        /// </summary>
-        private void ValidateTokens(IEnumerable<ExpressionNode> nodes)
-        {
-            var left = nodes.Count(node => node == OPERATOR_LEFT_PARENTHESIS);
-            var right = nodes.Count(node => node == OPERATOR_RIGHT_PARENTHESIS);
+            var left = 0;
+            var right = 0;
+
+            var result = new ExpressionNode[matches.Count];
+
+            for (var i = 0; i < matches.Count; i++)
+            {
+                ExpressionNode value = matches[i].Value;
+                if (value == OPERATOR_LEFT_PARENTHESIS)
+                    left++;
+                else if (value == OPERATOR_RIGHT_PARENTHESIS)
+                    right++;
+
+                result[i] = value;
+            }
 
             if (left != right)
             {
                 const string exceptionMessage = "表达式错误!表达式括号不相等";
                 throw new ArgumentException(exceptionMessage);
             }
+
+            return result;
         }
 
         /// <summary>

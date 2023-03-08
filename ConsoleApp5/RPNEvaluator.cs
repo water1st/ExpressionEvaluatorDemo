@@ -85,9 +85,6 @@ namespace ConsoleApp5
             //分词
             var tokens = Tokenize(expression);
 
-            //校验表达式
-            ValidateTokens(tokens);
-
             //转为逆波兰表达式
             var words = ConvertToRPN(tokens);
 
@@ -383,21 +380,6 @@ namespace ConsoleApp5
         }
 
         /// <summary>
-        /// 表达式校验
-        /// </summary>
-        private void ValidateTokens(IEnumerable<Word> words)
-        {
-            var left = words.Count(word => word == OPERATOR_LEFT_PARENTHESIS);
-            var right = words.Count(word => word == OPERATOR_RIGHT_PARENTHESIS);
-
-            if (left != right)
-            {
-                const string exceptionMessage = "表达式错误!表达式括号不相等";
-                throw new ArgumentException(exceptionMessage);
-            }
-        }
-
-        /// <summary>
         /// 转换为逆波兰表达式
         /// </summary>
         private IEnumerable<Word> ConvertToRPN(IEnumerable<Word> words)
@@ -462,10 +444,31 @@ namespace ConsoleApp5
             const string pattern = "[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|(&&)|(\\|\\|)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]";
             var regex = new Regex(pattern);
 
-            foreach (Match match in regex.Matches(expression))
+            var matches = regex.Matches(expression);
+
+            var left = 0;
+            var right = 0;
+
+            var result = new Word[matches.Count];
+
+            for (var i = 0; i < matches.Count; i++)
             {
-                yield return match.Value;
+                Word value = matches[i].Value;
+                if (value == OPERATOR_LEFT_PARENTHESIS)
+                    left++;
+                else if (value == OPERATOR_RIGHT_PARENTHESIS)
+                    right++;
+
+                result[i] = value;
             }
+
+            if (left != right)
+            {
+                const string exceptionMessage = "表达式错误!表达式括号不相等";
+                throw new ArgumentException(exceptionMessage);
+            }
+
+            return result;
         }
 
 
