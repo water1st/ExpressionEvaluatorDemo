@@ -9,6 +9,7 @@ namespace ConsoleApp5
     }
     public class RPNEvaluator : IEvaluator
     {
+        #region 操作符
         private const string OPERATOR_LEFT_PARENTHESIS = "(";
         private const string OPERATOR_RIGHT_PARENTHESIS = ")";
         private const string OPERATOR_AND = "&&";
@@ -25,16 +26,19 @@ namespace ConsoleApp5
         private const string OPERATOR_SUBTRACT = "-";
         private const string OPERATOR_MULTIPLY = "*";
         private const string OPERATOR_DIVIDE = "/";
-        private const char CHAR_DOUBLE_QUOTE = '\"';
+        #endregion
 
+        #region 优先级
         private const byte PRECEDENCE_0 = 0;
         private const byte PRECEDENCE_1 = 1;
         private const byte PRECEDENCE_2 = 2;
         private const byte PRECEDENCE_3 = 3;
         private const byte PRECEDENCE_4 = 4;
         private const byte PRECEDENCE_5 = 5;
+        #endregion
+
         /// <summary>
-        /// 操作符和优先级
+        /// 操作符和优先级映射字典
         /// </summary>
         protected static readonly IReadOnlyDictionary<string, byte> precedence = new ReadOnlyDictionary<string, byte>(new Dictionary<string, byte>
         {
@@ -477,6 +481,7 @@ namespace ConsoleApp5
         /// </summary>
         private class Word
         {
+            private const char CHAR_DOUBLE_QUOTE = '\"';
             public Word(string value)
             {
                 Value = value;

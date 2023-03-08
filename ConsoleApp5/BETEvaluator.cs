@@ -21,7 +21,7 @@ namespace ConsoleApp5
         private const string OPERATOR_SUBTRACT = "-";
         private const string OPERATOR_MULTIPLY = "*";
         private const string OPERATOR_DIVIDE = "/";
-        private const char CHAR_DOUBLE_QUOTE = '\"';
+        
 
         private const byte PRECEDENCE_0 = 0;
         private const byte PRECEDENCE_1 = 1;
@@ -482,6 +482,7 @@ namespace ConsoleApp5
         /// </summary>
         private class ExpressionNode
         {
+            private const char CHAR_DOUBLE_QUOTE = '\"';
             public ExpressionNode(string value)
             {
                 Value = value;
