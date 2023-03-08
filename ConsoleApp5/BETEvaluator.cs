@@ -452,23 +452,20 @@ namespace ConsoleApp5
 
             var matches = regex.Matches(expression);
 
-            var left = 0;
-            var right = 0;
+            var parenthesis = 0;
 
             var result = new ExpressionNode[matches.Count];
 
             for (var i = 0; i < matches.Count; i++)
             {
                 ExpressionNode value = matches[i].Value;
-                if (value == OPERATOR_LEFT_PARENTHESIS)
-                    left++;
-                else if (value == OPERATOR_RIGHT_PARENTHESIS)
-                    right++;
+                if (value == OPERATOR_LEFT_PARENTHESIS || value == OPERATOR_RIGHT_PARENTHESIS)
+                    parenthesis++;
 
                 result[i] = value;
             }
 
-            if (left != right)
+            if (parenthesis % 2 != 0)
             {
                 const string exceptionMessage = "表达式错误!表达式括号不相等";
                 throw new ArgumentException(exceptionMessage);
