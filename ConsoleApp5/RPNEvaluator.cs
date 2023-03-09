@@ -380,6 +380,9 @@ namespace ConsoleApp5
             }
         }
 
+        /// <summary>
+        /// 抛出异常
+        /// </summary>
         private void ThrowNotSupportException(Word left, Word right, Word @operator)
         {
             const string message = "不支持{0}类型数据{1}和{2}类型数据{3}进行{4}运算";
