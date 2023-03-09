@@ -582,11 +582,11 @@ namespace ConsoleApp5
             }
 
             /// <summary>
-            /// 是否字符串
+            /// 是否字符串（需要在IsDatetime()为False的分支判断）
             /// </summary>
             private bool IsString()
             {
-                return (Value.StartsWith(CHAR_DOUBLE_QUOTE) && Value.EndsWith(CHAR_DOUBLE_QUOTE);
+                return (Value.StartsWith(CHAR_DOUBLE_QUOTE) && Value.EndsWith(CHAR_DOUBLE_QUOTE));
             }
 
             /// <summary>
