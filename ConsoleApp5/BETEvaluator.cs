@@ -434,6 +434,11 @@ namespace ConsoleApp5
 
             while (result.Count > 1)
             {
+                if (stack.Count == 0)
+                {
+                    throw new ArgumentException("表达式错误，表达式缺少运算符");
+                }
+
                 SetChildNode();
             }
 
