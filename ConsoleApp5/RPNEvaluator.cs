@@ -586,7 +586,7 @@ namespace ConsoleApp5
             /// </summary>
             private bool IsString()
             {
-                return (!IsDatetime()) && Value.StartsWith(CHAR_DOUBLE_QUOTE) && Value.EndsWith(CHAR_DOUBLE_QUOTE);
+                return (Value.StartsWith(CHAR_DOUBLE_QUOTE) && Value.EndsWith(CHAR_DOUBLE_QUOTE);
             }
 
             /// <summary>
