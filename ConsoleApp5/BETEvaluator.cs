@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Newtonsoft.Json;
+using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 
 namespace ConsoleApp5
@@ -611,8 +612,15 @@ namespace ConsoleApp5
             /// </summary>
             private bool IsStringArray()
             {
-                const string pattern = @"^\[\s*""([^""\\]*(\\.[^""\\]*)*)""(\s*,\s*""([^""\\]*(\\.[^""\\]*)*)"")*\s*\]$";
-                return Regex.IsMatch(Value, pattern);
+                try
+                {
+                    JsonConvert.DeserializeObject<string[]>(Value);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
 
