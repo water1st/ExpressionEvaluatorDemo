@@ -568,8 +568,7 @@ namespace ConsoleApp5
             /// </summary>
             private bool IsNumber()
             {
-                const string pattern = @"^-?\d+(\.\d+)?$";
-                return Regex.IsMatch(Value, pattern);
+                return float.TryParse(Value, out _);
             }
 
             /// <summary>
