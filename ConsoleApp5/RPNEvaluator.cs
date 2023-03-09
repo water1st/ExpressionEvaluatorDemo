@@ -114,7 +114,11 @@ namespace ConsoleApp5
             }
 
             if (stack.Count > 1)
-                throw new ArgumentException("表达式错误，表达式缺少运算符");
+            {
+                const string errorMessage = "表达式错误，表达式缺少运算符或运算数";
+                throw new ArgumentException(errorMessage);
+            }
+
 
             // 最后栈中只剩下一个元素，即为最终结果
             return stack.Pop();
