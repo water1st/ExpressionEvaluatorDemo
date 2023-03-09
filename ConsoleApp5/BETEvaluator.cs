@@ -434,9 +434,9 @@ namespace ConsoleApp5
 
             while (result.Count > 1)
             {
-                if (stack.Count == 0)
+                if (stack.Count == 0 || result.Count < 2)
                 {
-                    throw new ArgumentException("表达式错误，表达式缺少运算符");
+                    throw new ArgumentException("表达式错误，表达式缺少运算符或运算数");
                 }
 
                 SetChildNode();
