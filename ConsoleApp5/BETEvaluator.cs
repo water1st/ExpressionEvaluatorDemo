@@ -398,61 +398,57 @@ namespace ConsoleApp5
                 result.Push(parent);
             }
 
-            using (var enumerator = nodes.GetEnumerator())
+
+            ExpressionNode previous = null;
+            while (nodes.Count > INT32_ZERO)
             {
-                var previous = enumerator.Current;
+                var node = nodes.Dequeue();
 
-                while (enumerator.MoveNext())
+                if (node.Type == ExpressionNodeType.Unknown)
+                    continue;
+
+                //如果不是操作符，则直接压到结果栈
+                if (node.Type != ExpressionNodeType.Operator)
                 {
-                    var node = enumerator.Current;
-
-                    if (node.Type == ExpressionNodeType.Unknown)
-                        continue;
-
-                    //如果不是操作符，则直接压到结果栈
-                    if (node.Type != ExpressionNodeType.Operator)
+                    result.Push(node);
+                }
+                else
+                {
+                    if (node == OPERATOR_RIGHT_PARENTHESIS)
                     {
-                        result.Push(node);
+                        //当()没表达式抛出异常
+                        if (previous == OPERATOR_LEFT_PARENTHESIS)
+                        {
+                            throw new ArgumentException("括号内缺少表达式");
+                        }
+
+                        //如果当前操作符是右括号)，则在操作符栈出栈，从结果栈出栈为子节点，
+                        //设置完子节点后，把操作符栈压到结果栈
+                        while (stack.Count > INT32_ZERO && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
+                        {
+                            SetChildNode();
+                        }
+                        //如果是左括号，则出栈并丢弃
+                        if (stack.Count > INT32_ZERO && stack.Peek() == OPERATOR_LEFT_PARENTHESIS)
+                        {
+                            stack.Pop();
+                        }
                     }
                     else
                     {
-                        if (node == OPERATOR_RIGHT_PARENTHESIS)
+                        //如果栈顶的操作符优先级大于目前操作符，则在操作符栈出栈，
+                        //从结果栈出栈为子节点，设置完子节点后，把操作符栈压到结果栈
+                        while (node != OPERATOR_LEFT_PARENTHESIS && stack.Count > INT32_ZERO && precedence[node.Value] <= precedence[stack.Peek()])
                         {
-                            //当()没表达式抛出异常
-                            if (previous == OPERATOR_LEFT_PARENTHESIS)
-                            {
-                                throw new ArgumentException("括号内缺少表达式");
-                            }
-
-                            //如果当前操作符是右括号)，则在操作符栈出栈，从结果栈出栈为子节点，
-                            //设置完子节点后，把操作符栈压到结果栈
-                            while (stack.Count > INT32_ZERO && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
-                            {
-                                SetChildNode();
-                            }
-                            //如果是左括号，则出栈并丢弃
-                            if (stack.Count > INT32_ZERO && stack.Peek() == OPERATOR_LEFT_PARENTHESIS)
-                            {
-                                stack.Pop();
-                            }
+                            SetChildNode();
                         }
-                        else
-                        {
-                            //如果栈顶的操作符优先级大于目前操作符，则在操作符栈出栈，
-                            //从结果栈出栈为子节点，设置完子节点后，把操作符栈压到结果栈
-                            while (node != OPERATOR_LEFT_PARENTHESIS && stack.Count > INT32_ZERO && precedence[node.Value] <= precedence[stack.Peek()])
-                            {
-                                SetChildNode();
-                            }
 
-                            //将当前操作符压到操作符栈
-                            stack.Push(node);
-                        }
+                        //将当前操作符压到操作符栈
+                        stack.Push(node);
                     }
-
-                    previous = node;
                 }
 
+                previous = node;
             }
 
             while (result.Count > 1)

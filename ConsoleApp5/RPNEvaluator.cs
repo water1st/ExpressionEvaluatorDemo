@@ -401,56 +401,54 @@ namespace ConsoleApp5
             var result = new Queue<Word>();
             //操作符栈
             var stack = new Stack<Word>();
-            using (var enumerator = words.GetEnumerator())
+            Word previous = null;
+            while (words.Count > 0)
             {
-                var previous = enumerator.Current;
-                while (enumerator.MoveNext())
+                var word = words.Dequeue();
+
+                if (word.Type == WordType.Unknown)
+                    continue;
+
+                //如果不是操作符，则直接入列
+                if (word.Type != WordType.Operator)
                 {
-                    var word = enumerator.Current;
-
-                    if (word.Type == WordType.Unknown)
-                        continue;
-
-                    //如果不是操作符，则直接入列
-                    if (word.Type != WordType.Operator)
+                    result.Enqueue(word);
+                }
+                else
+                {
+                    if (word == OPERATOR_RIGHT_PARENTHESIS)
                     {
-                        result.Enqueue(word);
+                        if (previous == OPERATOR_LEFT_PARENTHESIS)
+                        {
+                            throw new ArgumentException("括号内缺少表达式");
+                        }
+
+                        //如果是右括号，则出栈入列直到遇到左括号
+                        while (stack.Count > INT32_ZERO && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
+                        {
+                            result.Enqueue(stack.Pop());
+                        }
+                        //如果是左括号，则出栈并丢弃
+                        if (stack.Count > INT32_ZERO && stack.Peek() == OPERATOR_LEFT_PARENTHESIS)
+                        {
+                            stack.Pop();
+                        }
                     }
                     else
                     {
-                        if (word == OPERATOR_RIGHT_PARENTHESIS)
+                        //如果栈顶的操作符优先级大于目前操作符，则需要出栈入列
+                        while (word != OPERATOR_LEFT_PARENTHESIS && stack.Count > INT32_ZERO && precedence[word.Value] <= precedence[stack.Peek()])
                         {
-                            if (previous == OPERATOR_LEFT_PARENTHESIS)
-                            {
-                                throw new ArgumentException("括号内缺少表达式");
-                            }
-
-                            //如果是右括号，则出栈入列直到遇到左括号
-                            while (stack.Count > INT32_ZERO && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
-                            {
-                                result.Enqueue(stack.Pop());
-                            }
-                            //如果是左括号，则出栈并丢弃
-                            if (stack.Count > INT32_ZERO && stack.Peek() == OPERATOR_LEFT_PARENTHESIS)
-                            {
-                                stack.Pop();
-                            }
+                            result.Enqueue(stack.Pop());
                         }
-                        else
-                        {
-                            //如果栈顶的操作符优先级大于目前操作符，则需要出栈入列
-                            while (word != OPERATOR_LEFT_PARENTHESIS && stack.Count > INT32_ZERO && precedence[word.Value] <= precedence[stack.Peek()])
-                            {
-                                result.Enqueue(stack.Pop());
-                            }
 
-                            //将当前操作符入栈
-                            stack.Push(word);
-                        }
+                        //将当前操作符入栈
+                        stack.Push(word);
                     }
-
-                    previous = word;
                 }
+
+
+                previous = word;
             }
 
             //将栈内剩余操作符入列
