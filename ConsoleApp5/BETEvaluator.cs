@@ -379,7 +379,7 @@ namespace ConsoleApp5
         /// <summary>
         /// 构建表达式树
         /// </summary>
-        private ExpressionNode BuildTree(LinkedList<ExpressionNode> nodes)
+        private ExpressionNode BuildTree(Queue<ExpressionNode> nodes)
         {
             //结果栈
             var result = new Stack<ExpressionNode>();
@@ -472,7 +472,7 @@ namespace ConsoleApp5
         /// <summary>
         /// 分词和标记单词类型
         /// </summary>
-        private LinkedList<ExpressionNode> Tokenize(string expression)
+        private Queue<ExpressionNode> Tokenize(string expression)
         {
             const string pattern = "[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|(&&)|(\\|\\|)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]";
             var regex = new Regex(pattern);
@@ -481,7 +481,7 @@ namespace ConsoleApp5
 
             var parenthesis = INT32_ZERO;
 
-            var result = new LinkedList<ExpressionNode>();
+            var result = new Queue<ExpressionNode>();
             for (var i = INT32_ZERO; i < matches.Count; i++)
             {
                 ExpressionNode value = matches[i].Value;
@@ -489,12 +489,12 @@ namespace ConsoleApp5
                 if (i > INT32_ZERO && value.Type == ExpressionNodeType.Number && decimal.TryParse(value.Value, out var numberValue) && numberValue < INT32_ZERO
                     && result.Count > INT32_ZERO && result.Last().Type == ExpressionNodeType.Number)
                 {
-                    result.AddLast(OPERATOR_SUBTRACT);
-                    result.AddLast(Math.Abs(numberValue).ToString());
+                    result.Enqueue(OPERATOR_SUBTRACT);
+                    result.Enqueue(Math.Abs(numberValue).ToString());
                     continue;
                 }
 
-                result.AddLast(value);
+                result.Enqueue(value);
             }
 
             if (parenthesis != INT32_ZERO)

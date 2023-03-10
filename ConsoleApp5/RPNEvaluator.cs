@@ -395,13 +395,12 @@ namespace ConsoleApp5
         /// <summary>
         /// 转换为逆波兰表达式
         /// </summary>
-        private IEnumerable<Word> ConvertToRPN(LinkedList<Word> words)
+        private IEnumerable<Word> ConvertToRPN(Queue<Word> words)
         {
             //结果队列
             var result = new Queue<Word>();
             //操作符栈
             var stack = new Stack<Word>();
-
             using (var enumerator = words.GetEnumerator())
             {
                 var previous = enumerator.Current;
@@ -466,7 +465,7 @@ namespace ConsoleApp5
         /// <summary>
         /// 分词和标记单词类型
         /// </summary>
-        private LinkedList<Word> Tokenize(string expression)
+        private Queue<Word> Tokenize(string expression)
         {
             const string pattern = "[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|(&&)|(\\|\\|)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]";
             var regex = new Regex(pattern);
@@ -474,7 +473,7 @@ namespace ConsoleApp5
             var matches = regex.Matches(expression);
 
             var parenthesis = INT32_ZERO;
-            var result = new LinkedList<Word>();
+            var result = new Queue<Word>();
             for (var i = INT32_ZERO; i < matches.Count; i++)
             {
                 Word value = matches[i].Value;
@@ -482,8 +481,8 @@ namespace ConsoleApp5
                 if (i > INT32_ZERO && value.Type == WordType.Number && decimal.TryParse(value.Value, out var numberValue) && numberValue < INT32_ZERO
                     && result.Count > INT32_ZERO && result.Last().Type == WordType.Number)
                 {
-                    result.AddLast(OPERATOR_SUBTRACT);
-                    result.AddLast(Math.Abs(numberValue).ToString());
+                    result.Enqueue(OPERATOR_SUBTRACT);
+                    result.Enqueue(Math.Abs(numberValue).ToString());
                     continue;
                 }
 
@@ -492,7 +491,7 @@ namespace ConsoleApp5
                 else if (value == OPERATOR_RIGHT_PARENTHESIS)
                     parenthesis--;
 
-                result.AddLast(value);
+                result.Enqueue(value);
             }
 
             if (parenthesis != INT32_ZERO)
