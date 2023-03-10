@@ -467,18 +467,26 @@ namespace ConsoleApp5
             var matches = regex.Matches(expression);
 
             var parenthesis = INT32_ZERO;
-
-            var result = new Word[matches.Count];
-
+            var result = new LinkedList<Word>();
             for (var i = INT32_ZERO; i < matches.Count; i++)
             {
                 Word value = matches[i].Value;
+                Word previous = i > 0 ? matches[i - 1].Value : null;
+
+                if (i > INT32_ZERO && value.Type == WordType.Number && decimal.TryParse(value.Value, out var numberValue) && numberValue < INT32_ZERO &&
+                    (previous != null && previous.Type == WordType.Number))
+                {
+                    result.AddLast(OPERATOR_SUBTRACT);
+                    result.AddLast(Math.Abs(numberValue).ToString());
+                    continue;
+                }
+
                 if (value == OPERATOR_LEFT_PARENTHESIS)
                     parenthesis++;
                 else if (value == OPERATOR_RIGHT_PARENTHESIS)
                     parenthesis--;
 
-                result[i] = value;
+                result.AddLast(value);
             }
 
             if (parenthesis != INT32_ZERO)
@@ -487,7 +495,7 @@ namespace ConsoleApp5
                 throw new ArgumentException(exceptionMessage);
             }
 
-            return result;
+            return result.ToArray();
         }
 
 
@@ -515,6 +523,11 @@ namespace ConsoleApp5
 
             public static implicit operator Word(string word)
             {
+                if (string.IsNullOrWhiteSpace(word) || word == String.Empty)
+                {
+                    return null;
+                }
+
                 return new Word(word);
             }
 

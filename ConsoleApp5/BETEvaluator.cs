@@ -472,17 +472,21 @@ namespace ConsoleApp5
 
             var parenthesis = INT32_ZERO;
 
-            var result = new ExpressionNode[matches.Count];
-
+            var result = new LinkedList<ExpressionNode>();
             for (var i = INT32_ZERO; i < matches.Count; i++)
             {
                 ExpressionNode value = matches[i].Value;
-                if (value == OPERATOR_LEFT_PARENTHESIS)
-                    parenthesis++;
-                else if (value == OPERATOR_RIGHT_PARENTHESIS)
-                    parenthesis--;
+                ExpressionNode previous = i > 0 ? matches[i - 1].Value : null;
 
-                result[i] = value;
+                if (i > INT32_ZERO && value.Type == ExpressionNodeType.Number && decimal.TryParse(value.Value, out var numberValue) && numberValue < INT32_ZERO &&
+                    (previous != null && previous.Type == ExpressionNodeType.Number))
+                {
+                    result.AddLast(OPERATOR_SUBTRACT);
+                    result.AddLast(Math.Abs(numberValue).ToString());
+                    continue;
+                }
+
+                result.AddLast(value);
             }
 
             if (parenthesis != INT32_ZERO)
@@ -491,7 +495,7 @@ namespace ConsoleApp5
                 throw new ArgumentException(exceptionMessage);
             }
 
-            return result;
+            return result.ToArray();
         }
 
         /// <summary>
@@ -520,6 +524,11 @@ namespace ConsoleApp5
 
             public static implicit operator ExpressionNode(string word)
             {
+                if (string.IsNullOrWhiteSpace(word) || word == String.Empty)
+                {
+                    return null;
+                }
+
                 return new ExpressionNode(word);
             }
 
