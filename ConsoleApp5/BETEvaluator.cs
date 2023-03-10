@@ -34,6 +34,8 @@ namespace ConsoleApp5
         private const byte PRECEDENCE_5 = 5;
         #endregion
 
+        protected const int INT32_ZERO = 0;
+
         /// <summary>
         /// 操作符和优先级映射字典
         /// </summary>
@@ -395,7 +397,7 @@ namespace ConsoleApp5
 
                 result.Push(parent);
             }
-            for (int i = 0; i < nodes.Length; i++)
+            for (int i = INT32_ZERO; i < nodes.Length; i++)
             {
                 var node = nodes[i];
 
@@ -412,19 +414,19 @@ namespace ConsoleApp5
                     if (node == OPERATOR_RIGHT_PARENTHESIS)
                     {
                         //当()没表达式抛出异常
-                        if (i > 0 && nodes[i - 1] == OPERATOR_LEFT_PARENTHESIS)
+                        if (i > INT32_ZERO && nodes[i - 1] == OPERATOR_LEFT_PARENTHESIS)
                         {
                             throw new ArgumentException("括号内缺少表达式");
                         }
 
                         //如果当前操作符是右括号)，则在操作符栈出栈，从结果栈出栈为子节点，
                         //设置完子节点后，把操作符栈压到结果栈
-                        while (stack.Count > 0 && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
+                        while (stack.Count > INT32_ZERO && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
                         {
                             SetChildNode();
                         }
                         //如果是左括号，则出栈并丢弃
-                        if (stack.Count > 0 && stack.Peek() == OPERATOR_LEFT_PARENTHESIS)
+                        if (stack.Count > INT32_ZERO && stack.Peek() == OPERATOR_LEFT_PARENTHESIS)
                         {
                             stack.Pop();
                         }
@@ -433,7 +435,7 @@ namespace ConsoleApp5
                     {
                         //如果栈顶的操作符优先级大于目前操作符，则在操作符栈出栈，
                         //从结果栈出栈为子节点，设置完子节点后，把操作符栈压到结果栈
-                        while (node != OPERATOR_LEFT_PARENTHESIS && stack.Count > 0 && precedence[node.Value] <= precedence[stack.Peek()])
+                        while (node != OPERATOR_LEFT_PARENTHESIS && stack.Count > INT32_ZERO && precedence[node.Value] <= precedence[stack.Peek()])
                         {
                             SetChildNode();
                         }
@@ -446,7 +448,7 @@ namespace ConsoleApp5
 
             while (result.Count > 1)
             {
-                if (stack.Count == 0 || result.Count < 2)
+                if (stack.Count == INT32_ZERO || result.Count < 2)
                 {
                     const string errorMessage = "表达式错误，表达式缺少运算符或运算数";
                     throw new ArgumentException(errorMessage);
@@ -464,16 +466,15 @@ namespace ConsoleApp5
         private ExpressionNode[] Tokenize(string expression)
         {
             const string pattern = "[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|(&&)|(\\|\\|)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]";
-            const int zero = 0;
             var regex = new Regex(pattern);
 
             var matches = regex.Matches(expression);
 
-            var parenthesis = zero;
+            var parenthesis = INT32_ZERO;
 
             var result = new ExpressionNode[matches.Count];
 
-            for (var i = zero; i < matches.Count; i++)
+            for (var i = INT32_ZERO; i < matches.Count; i++)
             {
                 ExpressionNode value = matches[i].Value;
                 if (value == OPERATOR_LEFT_PARENTHESIS)
@@ -484,7 +485,7 @@ namespace ConsoleApp5
                 result[i] = value;
             }
 
-            if (parenthesis != zero)
+            if (parenthesis != INT32_ZERO)
             {
                 const string exceptionMessage = "表达式错误!表达式括号数量不相等";
                 throw new ArgumentException(exceptionMessage);

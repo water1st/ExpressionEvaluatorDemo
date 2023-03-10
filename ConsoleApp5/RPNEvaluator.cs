@@ -38,6 +38,8 @@ namespace ConsoleApp5
         private const byte PRECEDENCE_5 = 5;
         #endregion
 
+        protected const int INT32_ZERO = 0;
+
         /// <summary>
         /// 操作符和优先级映射字典
         /// </summary>
@@ -399,7 +401,7 @@ namespace ConsoleApp5
             var result = new Queue<Word>();
             //操作符栈
             var stack = new Stack<Word>();
-            for (int i = 0; i < words.Length; i++)
+            for (int i = INT32_ZERO; i < words.Length; i++)
             {
                 var word = words[i];
 
@@ -415,18 +417,18 @@ namespace ConsoleApp5
                 {
                     if (word == OPERATOR_RIGHT_PARENTHESIS)
                     {
-                        if (i > 0 && words[i - 1] == OPERATOR_LEFT_PARENTHESIS)
+                        if (i > INT32_ZERO && words[i - 1] == OPERATOR_LEFT_PARENTHESIS)
                         {
                             throw new ArgumentException("括号内缺少表达式");
                         }
 
                         //如果是右括号，则出栈入列直到遇到左括号
-                        while (stack.Count > 0 && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
+                        while (stack.Count > INT32_ZERO && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
                         {
                             result.Enqueue(stack.Pop());
                         }
                         //如果是左括号，则出栈并丢弃
-                        if (stack.Count > 0 && stack.Peek() == OPERATOR_LEFT_PARENTHESIS)
+                        if (stack.Count > INT32_ZERO && stack.Peek() == OPERATOR_LEFT_PARENTHESIS)
                         {
                             stack.Pop();
                         }
@@ -434,7 +436,7 @@ namespace ConsoleApp5
                     else
                     {
                         //如果栈顶的操作符优先级大于目前操作符，则需要出栈入列
-                        while (word != OPERATOR_LEFT_PARENTHESIS && stack.Count > 0 && precedence[word.Value] <= precedence[stack.Peek()])
+                        while (word != OPERATOR_LEFT_PARENTHESIS && stack.Count > INT32_ZERO && precedence[word.Value] <= precedence[stack.Peek()])
                         {
                             result.Enqueue(stack.Pop());
                         }
@@ -446,7 +448,7 @@ namespace ConsoleApp5
             }
 
             //将栈内剩余操作符入列
-            while (stack.Count > 0)
+            while (stack.Count > INT32_ZERO)
             {
                 result.Enqueue(stack.Pop());
             }
@@ -460,16 +462,15 @@ namespace ConsoleApp5
         private Word[] Tokenize(string expression)
         {
             const string pattern = "[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|(&&)|(\\|\\|)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]";
-            const int zero = 0;
             var regex = new Regex(pattern);
 
             var matches = regex.Matches(expression);
 
-            var parenthesis = zero;
+            var parenthesis = INT32_ZERO;
 
             var result = new Word[matches.Count];
 
-            for (var i = zero; i < matches.Count; i++)
+            for (var i = INT32_ZERO; i < matches.Count; i++)
             {
                 Word value = matches[i].Value;
                 if (value == OPERATOR_LEFT_PARENTHESIS)
@@ -480,7 +481,7 @@ namespace ConsoleApp5
                 result[i] = value;
             }
 
-            if (parenthesis != zero)
+            if (parenthesis != INT32_ZERO)
             {
                 const string exceptionMessage = "表达式错误!表达式括号数量不相等";
                 throw new ArgumentException(exceptionMessage);
