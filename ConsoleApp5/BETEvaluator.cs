@@ -481,12 +481,13 @@ namespace ConsoleApp5
             for (var i = INT32_ZERO; i < matches.Count; i++)
             {
                 ExpressionNode value = matches[i].Value;
-
-                if (i > INT32_ZERO && value.Type == ExpressionNodeType.Number && decimal.TryParse(value.Value, out var numberValue) && numberValue < INT32_ZERO
+                const char subtract = '-';
+                if (i > INT32_ZERO && value.Type == ExpressionNodeType.Number && value.Value.Length > 0 && value.Value[INT32_ZERO] == subtract
                     && result.Count > INT32_ZERO && result.Last().Type == ExpressionNodeType.Number)
                 {
                     result.Enqueue(OPERATOR_SUBTRACT);
-                    result.Enqueue(Math.Abs(numberValue).ToString());
+                    value.Value = value.Value.TrimStart(subtract);
+                    result.Enqueue(value);
                     continue;
                 }
 
