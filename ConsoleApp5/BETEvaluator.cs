@@ -490,6 +490,11 @@ namespace ConsoleApp5
                     continue;
                 }
 
+                if (value == OPERATOR_LEFT_PARENTHESIS)
+                    parenthesis++;
+                else if (value == OPERATOR_RIGHT_PARENTHESIS)
+                    parenthesis--;
+
                 result.Enqueue(value);
             }
 
