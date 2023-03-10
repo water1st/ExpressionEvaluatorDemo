@@ -471,10 +471,9 @@ namespace ConsoleApp5
             for (var i = INT32_ZERO; i < matches.Count; i++)
             {
                 Word value = matches[i].Value;
-                Word previous = i > 0 ? matches[i - 1].Value : null;
 
-                if (i > INT32_ZERO && value.Type == WordType.Number && decimal.TryParse(value.Value, out var numberValue) && numberValue < INT32_ZERO &&
-                    (previous != null && previous.Type == WordType.Number))
+                if (i > INT32_ZERO && value.Type == WordType.Number && decimal.TryParse(value.Value, out var numberValue) && numberValue < INT32_ZERO
+                    && result.Count > INT32_ZERO && result.Last().Type == WordType.Number)
                 {
                     result.AddLast(OPERATOR_SUBTRACT);
                     result.AddLast(Math.Abs(numberValue).ToString());
