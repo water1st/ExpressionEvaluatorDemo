@@ -393,14 +393,16 @@ namespace ConsoleApp5
         /// <summary>
         /// 转换为逆波兰表达式
         /// </summary>
-        private IEnumerable<Word> ConvertToRPN(IEnumerable<Word> words)
+        private IEnumerable<Word> ConvertToRPN(Word[] words)
         {
             //结果队列
             var result = new Queue<Word>();
             //操作符栈
             var stack = new Stack<Word>();
-            foreach (var word in words)
+            for (int i = 0; i < words.Length; i++)
             {
+                var word = words[i];
+
                 if (word.Type == WordType.Unknown)
                     continue;
 
@@ -413,6 +415,11 @@ namespace ConsoleApp5
                 {
                     if (word == OPERATOR_RIGHT_PARENTHESIS)
                     {
+                        if (i > 0 && words[i - 1] == OPERATOR_LEFT_PARENTHESIS)
+                        {
+                            throw new ArgumentException("括号内缺少表达式");
+                        }
+
                         //如果是右括号，则出栈入列直到遇到左括号
                         while (stack.Count > 0 && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
                         {
@@ -450,7 +457,7 @@ namespace ConsoleApp5
         /// <summary>
         /// 分词和标记单词类型
         /// </summary>
-        private IEnumerable<Word> Tokenize(string expression)
+        private Word[] Tokenize(string expression)
         {
             const string pattern = "[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|(&&)|(\\|\\|)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]";
             const int zero = 0;

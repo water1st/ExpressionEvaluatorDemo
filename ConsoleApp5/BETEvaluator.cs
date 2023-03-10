@@ -377,7 +377,7 @@ namespace ConsoleApp5
         /// <summary>
         /// 构建表达式树
         /// </summary>
-        private ExpressionNode BuildTree(IEnumerable<ExpressionNode> nodes)
+        private ExpressionNode BuildTree(ExpressionNode[] nodes)
         {
             //结果栈
             var result = new Stack<ExpressionNode>();
@@ -395,9 +395,10 @@ namespace ConsoleApp5
 
                 result.Push(parent);
             }
-
-            foreach (var node in nodes)
+            for (int i = 0; i < nodes.Length; i++)
             {
+                var node = nodes[i];
+
                 if (node.Type == ExpressionNodeType.Unknown)
                     continue;
 
@@ -410,6 +411,12 @@ namespace ConsoleApp5
                 {
                     if (node == OPERATOR_RIGHT_PARENTHESIS)
                     {
+                        //当()没表达式抛出异常
+                        if (i > 0 && nodes[i - 1] == OPERATOR_LEFT_PARENTHESIS)
+                        {
+                            throw new ArgumentException("括号内缺少表达式");
+                        }
+
                         //如果当前操作符是右括号)，则在操作符栈出栈，从结果栈出栈为子节点，
                         //设置完子节点后，把操作符栈压到结果栈
                         while (stack.Count > 0 && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
@@ -454,7 +461,7 @@ namespace ConsoleApp5
         /// <summary>
         /// 分词和标记单词类型
         /// </summary>
-        private IEnumerable<ExpressionNode> Tokenize(string expression)
+        private ExpressionNode[] Tokenize(string expression)
         {
             const string pattern = "[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|(&&)|(\\|\\|)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]";
             const int zero = 0;
