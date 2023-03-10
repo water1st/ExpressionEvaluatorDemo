@@ -27,7 +27,7 @@ namespace ExpressionEvaluator
 
             var expressions = new string[]
             {
-                "4.1+4.1-4.1*4.1/4.1>=100",
+                        "4.1+4.1-4.1*4.1/4.1>=100",
                         "1+2*3 == 5",
                         "(1+2) * 3 / 3.14 + 5 - 3",
                         "(((1+2) * 3 / 3.14 + 5 - 3) == (4+6)) || (1/3 + (3+5) == 8)",
@@ -68,6 +68,7 @@ namespace ExpressionEvaluator
         // 测试用例
         private string[] expressions = new string[]
                 {
+                        "4.1+4.1-4.1*4.1/4.1>=100",
                         "1+2*3 == 5",
                         "(1+2) * 3 / 3.14 + 5 - 3",
                         "1 == 2",

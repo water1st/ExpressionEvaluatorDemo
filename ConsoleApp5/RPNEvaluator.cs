@@ -395,55 +395,62 @@ namespace ConsoleApp5
         /// <summary>
         /// 转换为逆波兰表达式
         /// </summary>
-        private IEnumerable<Word> ConvertToRPN(Word[] words)
+        private IEnumerable<Word> ConvertToRPN(LinkedList<Word> words)
         {
             //结果队列
             var result = new Queue<Word>();
             //操作符栈
             var stack = new Stack<Word>();
-            for (int i = INT32_ZERO; i < words.Length; i++)
+
+            using (var enumerator = words.GetEnumerator())
             {
-                var word = words[i];
-
-                if (word.Type == WordType.Unknown)
-                    continue;
-
-                //如果不是操作符，则直接入列
-                if (word.Type != WordType.Operator)
+                var previous = enumerator.Current;
+                while (enumerator.MoveNext())
                 {
-                    result.Enqueue(word);
-                }
-                else
-                {
-                    if (word == OPERATOR_RIGHT_PARENTHESIS)
+                    var word = enumerator.Current;
+
+                    if (word.Type == WordType.Unknown)
+                        continue;
+
+                    //如果不是操作符，则直接入列
+                    if (word.Type != WordType.Operator)
                     {
-                        if (i > INT32_ZERO && words[i - 1] == OPERATOR_LEFT_PARENTHESIS)
-                        {
-                            throw new ArgumentException("括号内缺少表达式");
-                        }
-
-                        //如果是右括号，则出栈入列直到遇到左括号
-                        while (stack.Count > INT32_ZERO && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
-                        {
-                            result.Enqueue(stack.Pop());
-                        }
-                        //如果是左括号，则出栈并丢弃
-                        if (stack.Count > INT32_ZERO && stack.Peek() == OPERATOR_LEFT_PARENTHESIS)
-                        {
-                            stack.Pop();
-                        }
+                        result.Enqueue(word);
                     }
                     else
                     {
-                        //如果栈顶的操作符优先级大于目前操作符，则需要出栈入列
-                        while (word != OPERATOR_LEFT_PARENTHESIS && stack.Count > INT32_ZERO && precedence[word.Value] <= precedence[stack.Peek()])
+                        if (word == OPERATOR_RIGHT_PARENTHESIS)
                         {
-                            result.Enqueue(stack.Pop());
-                        }
+                            if (previous == OPERATOR_LEFT_PARENTHESIS)
+                            {
+                                throw new ArgumentException("括号内缺少表达式");
+                            }
 
-                        //将当前操作符入栈
-                        stack.Push(word);
+                            //如果是右括号，则出栈入列直到遇到左括号
+                            while (stack.Count > INT32_ZERO && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
+                            {
+                                result.Enqueue(stack.Pop());
+                            }
+                            //如果是左括号，则出栈并丢弃
+                            if (stack.Count > INT32_ZERO && stack.Peek() == OPERATOR_LEFT_PARENTHESIS)
+                            {
+                                stack.Pop();
+                            }
+                        }
+                        else
+                        {
+                            //如果栈顶的操作符优先级大于目前操作符，则需要出栈入列
+                            while (word != OPERATOR_LEFT_PARENTHESIS && stack.Count > INT32_ZERO && precedence[word.Value] <= precedence[stack.Peek()])
+                            {
+                                result.Enqueue(stack.Pop());
+                            }
+
+                            //将当前操作符入栈
+                            stack.Push(word);
+                        }
                     }
+
+                    previous = word;
                 }
             }
 
@@ -459,7 +466,7 @@ namespace ConsoleApp5
         /// <summary>
         /// 分词和标记单词类型
         /// </summary>
-        private Word[] Tokenize(string expression)
+        private LinkedList<Word> Tokenize(string expression)
         {
             const string pattern = "[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|(&&)|(\\|\\|)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]";
             var regex = new Regex(pattern);
@@ -494,7 +501,7 @@ namespace ConsoleApp5
                 throw new ArgumentException(exceptionMessage);
             }
 
-            return result.ToArray();
+            return result;
         }
 
 
@@ -517,6 +524,9 @@ namespace ConsoleApp5
 
             public static implicit operator string(Word word)
             {
+                if (word == null)
+                    return null;
+
                 return word.ToString();
             }
 

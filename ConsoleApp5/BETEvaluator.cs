@@ -379,7 +379,7 @@ namespace ConsoleApp5
         /// <summary>
         /// 构建表达式树
         /// </summary>
-        private ExpressionNode BuildTree(ExpressionNode[] nodes)
+        private ExpressionNode BuildTree(LinkedList<ExpressionNode> nodes)
         {
             //结果栈
             var result = new Stack<ExpressionNode>();
@@ -397,53 +397,62 @@ namespace ConsoleApp5
 
                 result.Push(parent);
             }
-            for (int i = INT32_ZERO; i < nodes.Length; i++)
+
+            using (var enumerator = nodes.GetEnumerator())
             {
-                var node = nodes[i];
+                var previous = enumerator.Current;
 
-                if (node.Type == ExpressionNodeType.Unknown)
-                    continue;
+                while (enumerator.MoveNext())
+                {
+                    var node = enumerator.Current;
 
-                //如果不是操作符，则直接压到结果栈
-                if (node.Type != ExpressionNodeType.Operator)
-                {
-                    result.Push(node);
-                }
-                else
-                {
-                    if (node == OPERATOR_RIGHT_PARENTHESIS)
+                    if (node.Type == ExpressionNodeType.Unknown)
+                        continue;
+
+                    //如果不是操作符，则直接压到结果栈
+                    if (node.Type != ExpressionNodeType.Operator)
                     {
-                        //当()没表达式抛出异常
-                        if (i > INT32_ZERO && nodes[i - 1] == OPERATOR_LEFT_PARENTHESIS)
-                        {
-                            throw new ArgumentException("括号内缺少表达式");
-                        }
-
-                        //如果当前操作符是右括号)，则在操作符栈出栈，从结果栈出栈为子节点，
-                        //设置完子节点后，把操作符栈压到结果栈
-                        while (stack.Count > INT32_ZERO && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
-                        {
-                            SetChildNode();
-                        }
-                        //如果是左括号，则出栈并丢弃
-                        if (stack.Count > INT32_ZERO && stack.Peek() == OPERATOR_LEFT_PARENTHESIS)
-                        {
-                            stack.Pop();
-                        }
+                        result.Push(node);
                     }
                     else
                     {
-                        //如果栈顶的操作符优先级大于目前操作符，则在操作符栈出栈，
-                        //从结果栈出栈为子节点，设置完子节点后，把操作符栈压到结果栈
-                        while (node != OPERATOR_LEFT_PARENTHESIS && stack.Count > INT32_ZERO && precedence[node.Value] <= precedence[stack.Peek()])
+                        if (node == OPERATOR_RIGHT_PARENTHESIS)
                         {
-                            SetChildNode();
-                        }
+                            //当()没表达式抛出异常
+                            if (previous == OPERATOR_LEFT_PARENTHESIS)
+                            {
+                                throw new ArgumentException("括号内缺少表达式");
+                            }
 
-                        //将当前操作符压到操作符栈
-                        stack.Push(node);
+                            //如果当前操作符是右括号)，则在操作符栈出栈，从结果栈出栈为子节点，
+                            //设置完子节点后，把操作符栈压到结果栈
+                            while (stack.Count > INT32_ZERO && stack.Peek() != OPERATOR_LEFT_PARENTHESIS)
+                            {
+                                SetChildNode();
+                            }
+                            //如果是左括号，则出栈并丢弃
+                            if (stack.Count > INT32_ZERO && stack.Peek() == OPERATOR_LEFT_PARENTHESIS)
+                            {
+                                stack.Pop();
+                            }
+                        }
+                        else
+                        {
+                            //如果栈顶的操作符优先级大于目前操作符，则在操作符栈出栈，
+                            //从结果栈出栈为子节点，设置完子节点后，把操作符栈压到结果栈
+                            while (node != OPERATOR_LEFT_PARENTHESIS && stack.Count > INT32_ZERO && precedence[node.Value] <= precedence[stack.Peek()])
+                            {
+                                SetChildNode();
+                            }
+
+                            //将当前操作符压到操作符栈
+                            stack.Push(node);
+                        }
                     }
+
+                    previous = node;
                 }
+
             }
 
             while (result.Count > 1)
@@ -463,7 +472,7 @@ namespace ConsoleApp5
         /// <summary>
         /// 分词和标记单词类型
         /// </summary>
-        private ExpressionNode[] Tokenize(string expression)
+        private LinkedList<ExpressionNode> Tokenize(string expression)
         {
             const string pattern = "[-]?\\d+\\.?\\d*|\"[^\"]*\"|True|False|true|false|\\d{4}[-/]\\d{2}[-/]\\d{2}( \\d{2}:\\d{2}:\\d{2})?|(==)|(!=)|(>=)|(<=)|(##)|(!#)|(&&)|(\\|\\|)|[\\\\+\\\\\\-\\\\*/><\\\\(\\\\)]|\\[[^\\[\\]]*\\]";
             var regex = new Regex(pattern);
@@ -494,7 +503,7 @@ namespace ConsoleApp5
                 throw new ArgumentException(exceptionMessage);
             }
 
-            return result.ToArray();
+            return result;
         }
 
         /// <summary>
@@ -518,6 +527,11 @@ namespace ConsoleApp5
 
             public static implicit operator string(ExpressionNode word)
             {
+                if (word is null)
+                {
+                    return null;
+                }
+
                 return word.ToString();
             }
 
