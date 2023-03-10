@@ -482,7 +482,7 @@ namespace ConsoleApp5
             {
                 ExpressionNode value = matches[i].Value;
                 const char subtract = '-';
-                if (i > INT32_ZERO && value.Type == ExpressionNodeType.Number && value.Value.Length > 0 && value.Value[INT32_ZERO] == subtract
+                if (i > INT32_ZERO && value.Type == ExpressionNodeType.Number && value.Value.Length > INT32_ZERO && value.Value[INT32_ZERO] == subtract
                     && result.Count > INT32_ZERO && result.Last().Type == ExpressionNodeType.Number)
                 {
                     result.Enqueue(OPERATOR_SUBTRACT);

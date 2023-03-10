@@ -476,7 +476,7 @@ namespace ConsoleApp5
             {
                 Word value = matches[i].Value;
                 const char subtract = '-';
-                if (i > INT32_ZERO && value.Type == WordType.Number && value.Value.Length > 0 && value.Value[INT32_ZERO] == subtract
+                if (i > INT32_ZERO && value.Type == WordType.Number && value.Value.Length > INT32_ZERO && value.Value[INT32_ZERO] == subtract
                     && result.Count > INT32_ZERO && result.Last().Type == WordType.Number)
                 {
                     result.Enqueue(OPERATOR_SUBTRACT);
