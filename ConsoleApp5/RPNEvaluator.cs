@@ -418,7 +418,7 @@ namespace ConsoleApp5
                 {
                     if (word == OPERATOR_RIGHT_PARENTHESIS)
                     {
-                        if (previous == OPERATOR_LEFT_PARENTHESIS)
+                        if (previous != null && previous == OPERATOR_LEFT_PARENTHESIS)
                         {
                             throw new ArgumentException("括号内缺少表达式");
                         }
@@ -475,6 +475,7 @@ namespace ConsoleApp5
             for (var i = INT32_ZERO; i < matches.Count; i++)
             {
                 Word value = matches[i].Value;
+                //处理当没有使用空格分割操作符的时候，数字遇到减号会被分为负数的问题
                 const char subtract = '-';
                 if (i > INT32_ZERO && value.Type == WordType.Number && value.Value.Length > INT32_ZERO && value.Value[INT32_ZERO] == subtract
                     && result.Count > INT32_ZERO && result.Last().Type == WordType.Number)
@@ -485,6 +486,7 @@ namespace ConsoleApp5
                     continue;
                 }
 
+                //记录括号，如果左括号就加，右括号就减，最后回正就是左右括号数量对等
                 if (value == OPERATOR_LEFT_PARENTHESIS)
                     parenthesis++;
                 else if (value == OPERATOR_RIGHT_PARENTHESIS)

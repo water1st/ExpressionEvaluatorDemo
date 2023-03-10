@@ -417,7 +417,7 @@ namespace ConsoleApp5
                     if (node == OPERATOR_RIGHT_PARENTHESIS)
                     {
                         //当()没表达式抛出异常
-                        if (previous == OPERATOR_LEFT_PARENTHESIS)
+                        if (previous != null && previous == OPERATOR_LEFT_PARENTHESIS)
                         {
                             throw new ArgumentException("括号内缺少表达式");
                         }
@@ -482,6 +482,7 @@ namespace ConsoleApp5
             {
                 ExpressionNode value = matches[i].Value;
                 const char subtract = '-';
+                //处理当没有使用空格分割操作符的时候，数字遇到减号会被分为负数的问题
                 if (i > INT32_ZERO && value.Type == ExpressionNodeType.Number && value.Value.Length > INT32_ZERO && value.Value[INT32_ZERO] == subtract
                     && result.Count > INT32_ZERO && result.Last().Type == ExpressionNodeType.Number)
                 {
@@ -491,6 +492,7 @@ namespace ConsoleApp5
                     continue;
                 }
 
+                //记录括号，如果左括号就加，右括号就减，最后回正就是左右括号数量对等
                 if (value == OPERATOR_LEFT_PARENTHESIS)
                     parenthesis++;
                 else if (value == OPERATOR_RIGHT_PARENTHESIS)
