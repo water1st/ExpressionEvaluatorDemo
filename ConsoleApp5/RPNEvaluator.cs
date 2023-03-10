@@ -418,9 +418,11 @@ namespace ConsoleApp5
                 {
                     if (word == OPERATOR_RIGHT_PARENTHESIS)
                     {
+                        //当()没表达式抛出异常
                         if (previous != null && previous == OPERATOR_LEFT_PARENTHESIS)
                         {
-                            throw new ArgumentException("括号内缺少表达式");
+                            const string exceptionMessage = "括号内缺少表达式";
+                            throw new ArgumentException(exceptionMessage);
                         }
 
                         //如果是右括号，则出栈入列直到遇到左括号

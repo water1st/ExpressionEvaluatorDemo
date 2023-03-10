@@ -419,7 +419,8 @@ namespace ConsoleApp5
                         //当()没表达式抛出异常
                         if (previous != null && previous == OPERATOR_LEFT_PARENTHESIS)
                         {
-                            throw new ArgumentException("括号内缺少表达式");
+                            const string exceptionMessage = "括号内缺少表达式";
+                            throw new ArgumentException(exceptionMessage);
                         }
 
                         //如果当前操作符是右括号)，则在操作符栈出栈，从结果栈出栈为子节点，
