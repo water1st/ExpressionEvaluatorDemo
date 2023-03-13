@@ -48,7 +48,10 @@ namespace ExpressionEvaluator
                         "1==1 && 1<2",
                         "1==1 || 2==1",
                         "1==3 || true == false",
-                        "true==false && 3==1"
+                        "true==false && 3==1",
+                        "\"梓杰的的代码又快又省内存\" ## \"代码\"",
+                        "\"梓杰的代码\" ## \"垃圾代码\"",
+                        "\"梓杰的代码\" !# \"垃圾代码\""
             };
 
             foreach (var expression in expressions)
@@ -85,6 +88,9 @@ namespace ExpressionEvaluator
                         "[\"bob\",\"jack\"] !# \"jan\"",
                         "[\"bob\",\"jack\"] !# [\"jan\"]",
                         "[\"bob\",\"jack\"] ## [\"jan\"]",
+                        "\"梓杰的的代码又快又省内存\" ## \"代码\"",
+                        "\"梓杰的代码\" ## \"垃圾代码\"",
+                        "\"梓杰的代码\" !# \"垃圾代码\""
                 };
 
 
