@@ -95,6 +95,17 @@ namespace ConsoleApp5
             //转为逆波兰表达式
             var words = ConvertToRPN(tokens);
 
+            ///求逆波兰表达式的值
+            var result = EvaluateRPN(words);
+
+            return result;
+        }
+
+        /// <summary>
+        /// 求逆波兰表达式的值
+        /// </summary>
+        private string EvaluateRPN(IEnumerable<Word> words)
+        {
             //结果栈
             var stack = new Stack<Word>();
 
