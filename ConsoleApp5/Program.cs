@@ -8,8 +8,9 @@ namespace ExpressionEvaluator
     {
         static void Main(string[] args)
         {
-            Benchmark.RunAndPrintToConsole();
-            BenchmarkRunner.Run<Benchmark>();
+            EvaluatorBenchmark.RunAndPrintToConsole();
+
+            BenchmarkRunner.Run<EvaluatorBenchmark>();
         }
 
 
@@ -17,7 +18,7 @@ namespace ExpressionEvaluator
 
     [ThreadingDiagnoser]
     [MemoryDiagnoser]
-    public class Benchmark
+    public class EvaluatorBenchmark
     {
         // 测试用例
         private static readonly string[] expressions = new string[]
